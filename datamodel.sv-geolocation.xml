@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.3">
+	<classes>
+		<class id="Location" _created_in="itop-config-mgmt">
+			<fields>
+				<field id="latitude" _delta="define" xsi:type="AttributeDecimal">
+					<sql>lat</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+					<digits>8</digits>
+					<decimals>6</decimals>
+				</field>
+				<field id="longitude" _delta="define" xsi:type="AttributeDecimal">
+					<sql>lng</sql>
+					<default_value/>
+					<is_null_allowed>true</is_null_allowed>
+					<digits>9</digits>
+					<decimals>6</decimals>
+				</field>
+			</fields>
+			<presentation>
+				<details>
+					<items>
+						<item id="latitude" _delta="define">
+							<rank>35</rank>
+						</item>
+						<item id="longitude" _delta="define">
+							<rank>36</rank>
+						</item>
+					</items>
+				</details>
+			</presentation>
+		</class>
+	</classes>
+	<dictionaries>
+		<dictionary id="EN US">
+			<entries>
+				<entry id="Class:Location/Attribute:latitude" _delta="define">Latitude</entry>
+				<entry id="Class:Location/Attribute:longitude" _delta="define">Longitude</entry>
+			</entries>
+		</dictionary>
+		<dictionary id="NL NL">
+			<entries>
+				<entry id="Class:Location/Attribute:latitude" _delta="define">Breedtegraad</entry>
+				<entry id="Class:Location/Attribute:longitude" _delta="define">Lengtegraad</entry>
+			</entries>
+		</dictionary>
+	</dictionaries>
+</itop_design>
