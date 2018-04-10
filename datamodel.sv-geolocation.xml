@@ -3,29 +3,17 @@
 	<classes>
 		<class id="Location" _created_in="itop-config-mgmt">
 			<fields>
-				<field id="latitude" _delta="define" xsi:type="AttributeDecimal">
-					<sql>lat</sql>
+				<field id="geo" _delta="define" xsi:type="AttributeGeolocation">
+					<sql>geo</sql>
 					<default_value/>
 					<is_null_allowed>true</is_null_allowed>
-					<digits>8</digits>
-					<decimals>6</decimals>
-				</field>
-				<field id="longitude" _delta="define" xsi:type="AttributeDecimal">
-					<sql>lng</sql>
-					<default_value/>
-					<is_null_allowed>true</is_null_allowed>
-					<digits>9</digits>
-					<decimals>6</decimals>
 				</field>
 			</fields>
 			<presentation>
 				<details>
 					<items>
-						<item id="latitude" _delta="define">
+						<item id="geo" _delta="define">
 							<rank>35</rank>
-						</item>
-						<item id="longitude" _delta="define">
-							<rank>36</rank>
 						</item>
 					</items>
 				</details>
@@ -35,14 +23,16 @@
 	<dictionaries>
 		<dictionary id="EN US">
 			<entries>
-				<entry id="Class:Location/Attribute:latitude" _delta="define">Latitude</entry>
-				<entry id="Class:Location/Attribute:longitude" _delta="define">Longitude</entry>
+				<entry id="Class:Location/Attribute:geo" _delta="define">Geolocation</entry>
+				<entry id="Core:AttributeGeolocation" _delta="define">Geolocation</entry>
+				<entry id="Core:AttributeGeolocation+" _delta="define">Geographic coordinates</entry>
 			</entries>
 		</dictionary>
 		<dictionary id="NL NL">
 			<entries>
-				<entry id="Class:Location/Attribute:latitude" _delta="define">Breedtegraad</entry>
-				<entry id="Class:Location/Attribute:longitude" _delta="define">Lengtegraad</entry>
+				<entry id="Class:Location/Attribute:geo" _delta="define">Geolocatie</entry>
+				<entry id="Core:AttributeGeolocation" _delta="define">Geolocatie</entry>
+				<entry id="Core:AttributeGeolocation+" _delta="define">Geografische coordinaten</entry>
 			</entries>
 		</dictionary>
 	</dictionaries>
