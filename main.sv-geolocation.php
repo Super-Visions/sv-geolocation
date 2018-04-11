@@ -86,8 +86,7 @@ class AttributeGeolocation extends AttributeDBField
 	{
 		if ($value instanceOf ormGeolocation)
 		{
-			$sUrl = sprintf('https://maps.googleapis.com/maps/api/staticmap?markers=%f,%f&size=200x150&key=YOUR_API_KEY', $value->GetLatitude(), $value->GetLongitude());
-			
+			$sUrl = sprintf(utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl'), $value->GetLatitude(), $value->GetLongitude());
 			$sHTML = '<img src="'.$sUrl.'"/>';
 		}
 		else
