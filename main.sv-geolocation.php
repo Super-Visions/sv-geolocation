@@ -86,14 +86,16 @@ class AttributeGeolocation extends AttributeDBField
 	{
 		if ($value instanceOf ormGeolocation)
 		{
-			$sStaticMapUrl = sprintf(utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl'), $value->GetLatitude(), $value->GetLongitude());
+			$iWidth = $this->GetWidth();
+			$iHeight = $this->GetHeight();
+			$sStaticMapUrl = sprintf(utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl'), $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight);
 			if (empty($sStaticMapUrl))
 			{
 				$sHTML = '<pre>'.$value.'</pre>';
 			}
 			else
 			{
-				$sHTML = '<img src="'.$sStaticMapUrl.'"/>';
+				$sHTML = sprintf('<img src="%s" width="%d" height="%d"/>', $sStaticMapUrl, $iWidth, $iHeight);
 			}
 		}
 		else
@@ -106,6 +108,22 @@ class AttributeGeolocation extends AttributeDBField
 	public function GetAsHTMLForHistory($sValue, $oHostObject = null, $bLocalize = true)
 	{
 		return (string) $sValue;
+	}
+	
+	/**
+	 * @return int Width of the map
+	 */
+	public function GetWidth()
+	{
+		return (int) $this->GetOptional('width', 200);
+	}
+	
+	/**
+	 * @return int Height of the map
+	 */
+	public function GetHeight()
+	{
+		return (int) $this->GetOptional('height', 150);
 	}
 }
 
