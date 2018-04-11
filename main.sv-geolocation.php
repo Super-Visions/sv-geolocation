@@ -86,8 +86,15 @@ class AttributeGeolocation extends AttributeDBField
 	{
 		if ($value instanceOf ormGeolocation)
 		{
-			$sUrl = sprintf(utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl'), $value->GetLatitude(), $value->GetLongitude());
-			$sHTML = '<img src="'.$sUrl.'"/>';
+			$sStaticMapUrl = sprintf(utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl'), $value->GetLatitude(), $value->GetLongitude());
+			if (empty($sStaticMapUrl))
+			{
+				$sHTML = '<pre>'.$value.'</pre>';
+			}
+			else
+			{
+				$sHTML = '<img src="'.$sStaticMapUrl.'"/>';
+			}
 		}
 		else
 		{
