@@ -43,7 +43,7 @@ SetupWebPage::AddModule(
 		// Default settings
 		//
 		'settings' => array(
-			'staticmapurl' => 'https://maps.googleapis.com/maps/api/staticmap?markers=%f,%f&size=%dx%d&key=YOUR_API_KEY',
+			'staticmapurl' => null,
 		),
 	)
 );
