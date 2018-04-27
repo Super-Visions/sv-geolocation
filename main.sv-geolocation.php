@@ -141,7 +141,7 @@ class ormGeolocation
 	/**
 	 * @return float
 	 */
-	public function getLatitude(): float
+	public function getLatitude()
 	{
 		return $this->fLatitude;
 	}
@@ -149,7 +149,7 @@ class ormGeolocation
 	/**
 	 * @return float
 	 */
-	public function getLongitude(): float
+	public function getLongitude()
 	{
 		return $this->fLongitude;
 	}
