@@ -127,7 +127,7 @@ class AttributeGeolocation extends AttributeDBField
 	}
 }
 
-class ormGeolocation
+class ormGeolocation implements JsonSerializable
 {
 	protected $fLatitude = 0.0;
 	protected $fLongitude = 0.0;
@@ -157,5 +157,12 @@ class ormGeolocation
 	public function __toString()
 	{
 		return sprintf('%f,%f',$this->fLatitude, $this->fLongitude);
+	}
+	
+	public function jsonSerialize() {
+		return array(
+			'lat' => $this->fLatitude,
+			'lng' => $this->fLongitude,
+		);
 	}
 }
