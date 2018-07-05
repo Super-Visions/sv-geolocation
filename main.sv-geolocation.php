@@ -166,3 +166,142 @@ class ormGeolocation implements JsonSerializable
 		);
 	}
 }
+
+class GeoMap extends Dashlet
+{
+	static protected $aAttributeList;
+	
+	/**
+	 * @param ModelReflection $oModelReflection
+	 * @param string $sId
+	 */
+	public function __construct(ModelReflection $oModelReflection, $sId)
+	{
+		parent::__construct($oModelReflection, $sId);
+		$this->aProperties['height'] = 600;
+		$this->aProperties['attribute'] = '';
+	}
+	
+	/**
+	 * @param WebPage $oPage
+	 * @param bool $bEditMode
+	 * @param array $aExtraParams
+	 * @return mixed
+	 */
+	public function Render($oPage, $bEditMode = false, $aExtraParams = array())
+	{
+		$oPage->add_linked_script('https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY');
+		
+		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
+		$sStyle = sprintf("height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') no-repeat scroll 50%% 50%%;", $this->aProperties['height'], MetaModel::GetEnvironment());
+		$oPage->add(sprintf('<div id="%s" class="dashlet-content" style="%s"></div>', $sId, $sStyle));
+		
+		$oFilter = DBObjectSearch::FromOQL("SELECT Location");
+		$oSet = new DBObjectSet($oFilter);
+		
+		$aLocations = array();
+		while ($oCurrObj = $oSet->Fetch())
+		{
+			if ($oCurrObj->Get('geo'))
+			{
+				$aLocations[] = array(
+					'title' => $oCurrObj->GetName(),
+					'icon' => $oCurrObj->GetIcon(false),
+					'position' => $oCurrObj->Get('geo'),
+					'tooltip' => static::GetTooltip($oCurrObj),
+				);
+			}
+		}
+		
+		$oPage->add_script("
+var ".$sId.";
+$(function() {
+	".$sId." = new google.maps.Map(document.getElementById('".$sId."'), {
+		center: {lat: 52.3546274, lng: 4.8285839},
+		zoom: 11
+	});
+	
+	var locations = ".json_encode($aLocations)."
+	
+	locations.map(function(location, i){
+		var marker = new google.maps.Marker({
+			position: location.position,
+			icon: location.icon,
+			title: location.title,
+			map: ".$sId."
+		});
+		
+		var tooltip = new google.maps.InfoWindow({
+          content: location.tooltip
+        });
+        
+        marker.addListener('click', function() {
+          tooltip.open(".$sId.", marker);
+        });
+	});
+	
+	
+	
+});");
+	
+	}
+	
+	/**
+	 * Add properties fields
+	 * @param DesignerForm $oForm
+	 * @return mixed
+	 */
+	public function GetPropertiesFields(DesignerForm $oForm)
+	{
+		$oHeightField = new DesignerIntegerField('height', Dict::S('UI:DashletGeoMap:Prop-Height', 'Height'), $this->aProperties['height']);
+		$oForm->AddField($oHeightField);
+		
+		if (is_null(static::$aAttributeList)) static::$aAttributeList = static::FindGeolocationAttributes();
+		
+		$oAttributeField = new DesignerComboField('attribute', 'attribute', $this->aProperties['attribute']);
+		$oAttributeField->SetAllowedValues(static::$aAttributeList);
+		$oForm->AddField($oAttributeField);
+		
+	}
+	
+	/**
+	 * Dashlet info
+	 * @return array
+	 * @throws DictExceptionMissingString
+	 */
+	public static function GetInfo()
+	{
+		return array(
+			'label' => Dict::S('UI:DashletGeoMap:Label', 'GeoMap'),
+			'icon' => 'env-'.MetaModel::GetEnvironment().'/sv-geolocation/images/geomap.png',
+			'description' => Dict::S('UI:DashletGeoMap:Description'),
+		);
+	}
+	
+	protected static function GetTooltip(DBObject $oCurrObj)
+	{
+		$sClass = get_class($oCurrObj);
+		$sTooltip = $oCurrObj->GetHyperlink().'<hr/>'.PHP_EOL;
+		$sTooltip .= '<table><tbody>';
+		foreach(MetaModel::GetZListItems($sClass, 'list') as $sAttCode)
+		{
+			$oAttDef = MetaModel::GetAttributeDef($sClass, $sAttCode);
+			$sTooltip .= '<tr><td>'.$oAttDef->GetLabel().':&nbsp;</td><td>'.$oCurrObj->GetAsHtml($sAttCode).'</td></tr>';
+		}
+		$sTooltip .= '</tbody></table>';
+		return $sTooltip;
+	}
+	
+	protected static function FindGeolocationAttributes()
+	{
+		$aAttributes = array();
+		foreach (MetaModel::GetClasses() as $sClass) foreach (MetaModel::ListAttributeDefs($sClass) as $sAttribute => $oAttributeDef)
+		{
+			if (is_a($oAttributeDef, 'AttributeGeolocation'))
+			{
+				$aAttributes[$sClass.'.'.$sAttribute] = MetaModel::GetName($sClass).' / '.$oAttributeDef->GetLabel();
+			}
+		}
+		return $aAttributes;
+	}
+}
