@@ -50,7 +50,7 @@ class AttributeGeolocation extends AttributeDBField
 		
 		if (isset($aCols[$sPrefix.'latitude'], $aCols[$sPrefix.'longitude']))
 		{
-			return new ormGeolocation($aCols[$sPrefix.'latitude'], $aCols[$sPrefix.'longitude']);
+			return new ormGeolocation(floatval($aCols[$sPrefix.'latitude']), floatval($aCols[$sPrefix.'longitude']));
 		}
 	}
 	
@@ -132,7 +132,7 @@ class ormGeolocation implements JsonSerializable
 	protected $fLatitude = 0.0;
 	protected $fLongitude = 0.0;
 	
-	public function __construct(float $fLatitude, float $fLongitude)
+	public function __construct($fLatitude, $fLongitude)
 	{
 		$this->fLatitude = $fLatitude;
 		$this->fLongitude = $fLongitude;
