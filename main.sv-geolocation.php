@@ -62,18 +62,32 @@ class AttributeGeolocation extends AttributeDBField
 			$aValues[$this->GetCode().'_lat'] = $value->getLatitude();
 			$aValues[$this->GetCode().'_lng'] = $value->getLongitude();
 		}
-		elseif(preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', $value, $aMatches))
-		{
-			$aValues[$this->GetCode().'_lat'] = $aMatches[1];
-			$aValues[$this->GetCode().'_lng'] = $aMatches[2];
-		}
 		else
 		{
-			// TODO: Implement location to coordinates
 			$aValues[$this->GetCode().'_lat'] = null;
 			$aValues[$this->GetCode().'_lng'] = null;
 		}
 		return $aValues;
+	}
+	
+	/**
+	 * @param string|ormGeolocation $proposedValue
+	 * @param DBObject $oHostObj
+	 * @return ormGeolocation
+	 */
+	public function MakeRealValue($proposedValue, $oHostObj)
+	{
+		if ($proposedValue instanceof ormGeolocation) return $proposedValue;
+		
+		if(preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($proposedValue), $aMatches))
+		{
+			return new ormGeolocation($aMatches[1], $aMatches[2]);
+		}
+		else
+		{
+			// TODO: Implement location to coordinates
+			return;
+		}
 	}
 	
 	/**
