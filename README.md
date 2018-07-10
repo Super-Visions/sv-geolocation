@@ -3,6 +3,7 @@ Geolocation
 
 The module `sv-geolocation` is an [iTop](https://www.combodo.com/itop-193) extension to add a new attribute type called `AttributeGeolocation` to provide geographic coordinates.
 This new attribute type is added to the `Location` class as a new field.
+The module also provides a new dashboard dashlet `GeoMap` which adds an interactive map.
 
 Installation
 ------------
@@ -18,6 +19,7 @@ After installation, it is possible to change some settings in order to let this 
 ### provider
 
 Specify the provider you want to use for maps.
+Currently, only Google Maps is supported for interactive maps.
 
 * `GoogleMaps`
 * `OpenStreetMaps`
@@ -54,6 +56,8 @@ Example values for `staticmapurl`:
 XML Data Model Reference
 ------------------------
 
+Field type is `AttributeGeolocation`.
+
 ### Definition
 
 * sql _(mandatory)_
@@ -79,6 +83,28 @@ Defaults to 150.
     <width>200</width>
     <height>150</height>
 </field>
+```
+
+XML Dashboard Reference
+-----------------------
+
+Dashlet type is `GeoMap`.
+
+### Definition
+
+* rank _(mandatory)_
+Display rank.
+* height _(optional)_
+Height of the interactive map.
+Defaults to 600.
+
+### Example
+
+```xml
+<dashlet id="1" xsi:type="GeoMap">
+    <rank>1</rank>
+    <height>500</height>
+</dashlet>
 ```
 
 Preview
