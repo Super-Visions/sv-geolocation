@@ -13,8 +13,27 @@ Be sure to enable the extension during setup.
 Configuration
 -------------
 
-After installation, it is required to set the correct `staticmapurl` value in order to have map locations displayed on a map.
-This value depends on which map provider (Google, OSM, ...) you want to use.
+After installation, it is possible to change some settings in order to let this module fully function.
+
+### provider
+
+Specify the provider you want to use for maps.
+
+* `GoogleMaps`
+* `OpenStreetMaps`
+* `MapQuest`
+
+### api_key
+
+Depending on the provider you are using, you might need to enter the API key.
+
+To use maps from Google Maps, you will need to [acquire an API key](https://developers.google.com/maps/documentation/javascript/get-api-key).
+
+### staticmap
+
+This value depends on which map provider (GM, OSM, ...) you want to use for thumbnails.
+It only needs to be set if you want to override the default behaviour.
+
 Depending on each map provider, there are several paremeters to give.
 The following parameters will be filled in:
 
@@ -22,25 +41,15 @@ The following parameters will be filled in:
 2. Longitude from the object.
 3. width from datamodel.
 4. height from datamodel.
-
-### Google Static Maps API
-
-To use static maps from Google Maps, you will need to [acquire an API key](https://developers.google.com/maps/documentation/static-maps/get-api-key).
-An example value for `staticmapurl` could be:
-`https://maps.googleapis.com/maps/api/staticmap?markers=%f,%f&size=%dx%d&key=YOUR_API_KEY`.
-For more information, see [documentation](https://developers.google.com/maps/documentation/static-maps/intro).
-
-### OpenStreetMap
-
-OpenStreetMap itself does not provide static map images, but there are some 3rd party services listed on the [Wiki page](https://wiki.openstreetmap.org/wiki/Static_map_images).
-Some of these require an API key while others don't, but might be slower.
+5. API key from configuration.
 
 Example values for `staticmapurl`:
-
-* [staticMapLite](https://wiki.openstreetmap.org/wiki/StaticMapLite):
+* [Google Maps](https://developers.google.com/maps/documentation/static-maps/intro):
+`https://maps.googleapis.com/maps/api/staticmap?markers=%f,%f&size=%dx%d&key=%s`.
+* [Open Street Map](https://wiki.openstreetmap.org/wiki/StaticMapLite):
 `http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=17`
 * [MapQuest](https://developer.mapquest.com/documentation/static-map-api/v5/):
-`https://www.mapquestapi.com/staticmap/v5/map?locations=%f,%f&size=%d,%d&zoom=17&key=YOUR_API_KEY`
+`https://www.mapquestapi.com/staticmap/v5/map?locations=%f,%f&size=%d,%d&zoom=17&key=%s`
 
 XML Data Model Reference
 ------------------------

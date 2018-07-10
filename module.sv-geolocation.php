@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'sv-geolocation/0.3.0',
+	'sv-geolocation/1.0.0',
 	array(
 		// Identification
 		//
@@ -43,6 +43,8 @@ SetupWebPage::AddModule(
 		// Default settings
 		//
 		'settings' => array(
+			'provider' => 'GoogleMaps',
+			'api_key' => null,
 			'staticmapurl' => null,
 		),
 	)

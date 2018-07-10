@@ -102,7 +102,8 @@ class AttributeGeolocation extends AttributeDBField
 		{
 			$iWidth = $this->GetWidth();
 			$iHeight = $this->GetHeight();
-			$sStaticMapUrl = sprintf(utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl'), $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight);
+			$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
+			$sStaticMapUrl = sprintf(static::GetStaticMapUrl(), $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight, $sApiKey);
 			if (empty($sStaticMapUrl))
 			{
 				$sHTML = '<pre>'.$value.'</pre>';
@@ -138,6 +139,30 @@ class AttributeGeolocation extends AttributeDBField
 	public function GetHeight()
 	{
 		return (int) $this->GetOptional('height', 150);
+	}
+	
+	/**
+	 * @return string Image URL to use as static map
+	 */
+	public static function GetStaticMapUrl()
+	{
+		$sStaticMapUrl = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl');
+		if ($sStaticMapUrl) return $sStaticMapUrl;
+		
+		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
+		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
+		{
+			case 'GoogleMaps':
+				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1f,%2f&size=%3dx%4d&key=%5s';
+				break;
+				
+			case 'OpenStreetMap':
+				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=17';
+				
+			case 'MapQuest':
+				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1f,%2f&size=%3d,%4d&zoom=17&key=%5s';
+				break;
+		}
 	}
 }
 
@@ -204,7 +229,8 @@ class GeoMap extends Dashlet
 	 */
 	public function Render($oPage, $bEditMode = false, $aExtraParams = array())
 	{
-		$oPage->add_linked_script('https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY');
+		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
+		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
 		
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
 		$sStyle = sprintf("height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') no-repeat scroll 50%% 50%%;", $this->aProperties['height'], MetaModel::GetEnvironment());
