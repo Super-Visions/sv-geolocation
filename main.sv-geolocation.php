@@ -6,6 +6,10 @@
 
 class AttributeGeolocation extends AttributeDBField
 {
+	public function GetEditClass()
+	{
+		return 'GeoLocation';
+	}
 	
 	public function GetSQLColumns($bFullSpec = false)
 	{
