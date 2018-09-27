@@ -233,7 +233,7 @@ class GeoMap extends Dashlet
 		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
 		
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
-		$sStyle = sprintf("height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') no-repeat scroll 50%% 50%%;", $this->aProperties['height'], MetaModel::GetEnvironment());
+		$sStyle = sprintf("height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $this->aProperties['height'], MetaModel::GetEnvironment());
 		$oPage->add(sprintf('<div id="%s" class="dashlet-content" style="%s"></div>', $sId, $sStyle));
 		
 		$oFilter = DBObjectSearch::FromOQL("SELECT Location");
