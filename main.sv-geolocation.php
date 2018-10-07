@@ -158,7 +158,7 @@ class AttributeGeolocation extends AttributeDBField
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
-				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1f,%2f&size=%3dx%4d&key=%5s';
+				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$f,%2$f&size=%3$dx%4$d&key=%5$s';
 				break;
 				
 			case 'OpenStreetMap':

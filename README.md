@@ -31,7 +31,7 @@ Depending on the provider you are using, you might need to enter the API key.
 
 To use maps from Google Maps, you will need to [acquire an API key](https://developers.google.com/maps/documentation/javascript/get-api-key).
 
-### staticmap
+### staticmapurl
 
 This value depends on which map provider (GM, OSM, ...) you want to use for thumbnails.
 It only needs to be set if you want to override the default behaviour.
@@ -41,8 +41,8 @@ The following parameters will be filled in:
 
 1. Latitude from the object.
 2. Longitude from the object.
-3. width from datamodel.
-4. height from datamodel.
+3. Width from datamodel.
+4. Height from datamodel.
 5. API key from configuration.
 6. Zoom from configuration.
 
