@@ -107,7 +107,8 @@ class AttributeGeolocation extends AttributeDBField
 			$iWidth = $this->GetWidth();
 			$iHeight = $this->GetHeight();
 			$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
-			$sStaticMapUrl = sprintf(static::GetStaticMapUrl(), $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight, $sApiKey);
+			$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
+			$sStaticMapUrl = sprintf(static::GetStaticMapUrl(), $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight, $sApiKey, $iZoom);
 			if (empty($sStaticMapUrl))
 			{
 				$sHTML = '<pre>'.$value.'</pre>';
@@ -161,10 +162,10 @@ class AttributeGeolocation extends AttributeDBField
 				break;
 				
 			case 'OpenStreetMap':
-				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=17';
+				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=%6$d';
 				
 			case 'MapQuest':
-				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1f,%2f&size=%3d,%4d&zoom=17&key=%5s';
+				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
 				break;
 		}
 	}
@@ -236,6 +237,10 @@ class GeoMap extends Dashlet
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
 		
+		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
+		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
+		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
+		
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
 		$sStyle = sprintf("height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $this->aProperties['height'], MetaModel::GetEnvironment());
 		$oPage->add(sprintf('<div id="%s" class="dashlet-content" style="%s"></div>', $sId, $sStyle));
@@ -261,8 +266,8 @@ class GeoMap extends Dashlet
 var ".$sId.";
 $(function() {
 	".$sId." = new google.maps.Map(document.getElementById('".$sId."'), {
-		center: {lat: 52.3546274, lng: 4.8285839},
-		zoom: 11
+		center: {lat: ".$iDefaultLat.", lng: ".$iDefaultLng."},
+		zoom: ".$iZoom."
 	});
 	
 	var locations = ".json_encode($aLocations)."

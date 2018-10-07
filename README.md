@@ -44,14 +44,27 @@ The following parameters will be filled in:
 3. width from datamodel.
 4. height from datamodel.
 5. API key from configuration.
+6. Zoom from configuration.
 
 Example values for `staticmapurl`:
 * [Google Maps](https://developers.google.com/maps/documentation/static-maps/intro):
 `https://maps.googleapis.com/maps/api/staticmap?markers=%f,%f&size=%dx%d&key=%s`.
 * [Open Street Map](https://wiki.openstreetmap.org/wiki/StaticMapLite):
-`http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=17`
+`http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=%6$d`
 * [MapQuest](https://developer.mapquest.com/documentation/static-map-api/v5/):
-`https://www.mapquestapi.com/staticmap/v5/map?locations=%f,%f&size=%d,%d&zoom=17&key=%s`
+`https://www.mapquestapi.com/staticmap/v5/map?locations=%f,%f&size=%d,%d&key=%s&zoom=%d`
+
+### default_latitude
+
+This is the default latitude when a new dashlet is displayed.
+
+### default_longitude
+
+This is the default longitude when a new dashlet is displayed.
+
+### default_zoom
+
+This is the default zoom for dashlet maps and for static maps.
 
 XML Data Model Reference
 ------------------------
