@@ -169,6 +169,86 @@ class AttributeGeolocation extends AttributeDBField
 				break;
 		}
 	}
+	
+	/**
+	 * @param iTopWebPage $oPage
+	 * @param string $value
+	 * @param string $sDisplayValue
+	 * @param string $iId
+	 * @param string $sNameSuffix
+	 * @param string $sFieldPrefix
+	 * @return string
+	 */
+	public function GetFormElement(iTopWebPage $oPage, $value, $sDisplayValue, $iId, $sNameSuffix = '', $sFieldPrefix = '')
+	{
+		$sAttCode = $this->GetCode();
+		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
+		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
+		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
+		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
+		
+		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
+		{
+			case 'GoogleMaps':
+				$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
+				
+				$sStyle = sprintf("width: %dpx; height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $this->GetWidth(), $this->GetHeight(), MetaModel::GetEnvironment());
+				$sOptions = json_encode(array(
+					'id' => $iId,
+					'center' => isset($value) ? $value : array('lat' => $iDefaultLat, 'lng' => $iDefaultLng),
+					'zoom' => $iZoom,
+					'marker' => $value,
+				));
+				
+				$oPage->add_script("
+$(function () {
+    var options = {$sOptions};
+    var map = new google.maps.Map(document.getElementById('map_'+options.id), options);
+    
+    var save_location = function (latLng) {
+        if (latLng) document.getElementById(options.id).value = latLng.lat() + ',' + latLng.lng();
+        else document.getElementById(options.id).value = '';
+    };
+    
+    var marker = new google.maps.Marker({
+		map: null,
+		draggable: true,
+		position: options.center,
+	});
+
+	// save marker location
+	marker.addListener('dragend', function () {
+		map.panTo(marker.position);
+		save_location(marker.position);
+	});
+	
+	// remove marker
+	marker.addListener('click', function(){
+		marker.setMap();
+		save_location();
+	});
+	
+    // set marker to location
+    map.addListener( 'click', function (event) {
+        marker.setPosition(event.latLng);
+        map.panTo(event.latLng);
+        save_location(event.latLng);
+        marker.setMap(map);
+    });
+	
+	if (options.marker) {
+	    google.maps.event.trigger(map, 'click', {latLng: new google.maps.LatLng(options.marker)});
+	}
+	
+});");
+				
+				return "<div class=\"field_input_zone field_input_html\"><div id=\"map_{$iId}\" style=\"{$sStyle}\"></div><input type=\"hidden\" name=\"attr_{$sFieldPrefix}{$sAttCode}{$sNameSuffix}\" value=\"{$sDisplayValue}\" id=\"{$iId}\"/></div>";
+				
+			default:
+				$sHelpText = htmlentities($this->GetHelpOnEdition(), ENT_QUOTES, 'UTF-8');
+				return "<div class=\"field_input_zone field_input_string\"><input title=\"$sHelpText\" type=\"text\" name=\"attr_{$sFieldPrefix}{$sAttCode}{$sNameSuffix}\" value=\"{$sDisplayValue}\" id=\"{$iId}\"/></div>";
+		}
+	}
 }
 
 class ormGeolocation implements JsonSerializable
