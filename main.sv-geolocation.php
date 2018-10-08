@@ -382,7 +382,7 @@ $(function() {
 	 */
 	public function GetPropertiesFields(DesignerForm $oForm)
 	{
-		$oHeightField = new DesignerIntegerField('height', Dict::S('UI:DashletGeoMap:Prop-Height', 'Height'), $this->aProperties['height']);
+		$oHeightField = new DesignerIntegerField('height', Dict::S('UI:DashletGeoMap:Prop-Height'), $this->aProperties['height']);
 		$oForm->AddField($oHeightField);
 		
 		if (is_null(static::$aAttributeList)) static::$aAttributeList = static::FindGeolocationAttributes();

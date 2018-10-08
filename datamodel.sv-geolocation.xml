@@ -26,6 +26,7 @@
 				<entry id="Class:Location/Attribute:geo" _delta="define">Geolocation</entry>
 				<entry id="Core:AttributeGeolocation" _delta="define">Geolocation</entry>
 				<entry id="Core:AttributeGeolocation+" _delta="define">Geographic coordinates</entry>
+				<entry id="UI:DashletGeoMap:Prop-Height" _delta="define">Height</entry>
 			</entries>
 		</dictionary>
 		<dictionary id="NL NL">
@@ -33,6 +34,7 @@
 				<entry id="Class:Location/Attribute:geo" _delta="define">Geolocatie</entry>
 				<entry id="Core:AttributeGeolocation" _delta="define">Geolocatie</entry>
 				<entry id="Core:AttributeGeolocation+" _delta="define">Geografische coordinaten</entry>
+				<entry id="UI:DashletGeoMap:Prop-Height" _delta="define">Hoogte</entry>
 			</entries>
 		</dictionary>
 	</dictionaries>
