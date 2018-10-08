@@ -303,6 +303,7 @@ class GeoMap extends Dashlet
 	{
 		parent::__construct($oModelReflection, $sId);
 		$this->aProperties['height'] = 600;
+		$this->aProperties['query'] = 'SELECT Location';
 		$this->aProperties['attribute'] = '';
 	}
 	
@@ -325,18 +326,18 @@ class GeoMap extends Dashlet
 		$sStyle = sprintf("height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $this->aProperties['height'], MetaModel::GetEnvironment());
 		$oPage->add(sprintf('<div id="%s" class="dashlet-content" style="%s"></div>', $sId, $sStyle));
 		
-		$oFilter = DBObjectSearch::FromOQL("SELECT Location");
+		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
 		$oSet = new DBObjectSet($oFilter);
 		
 		$aLocations = array();
 		while ($oCurrObj = $oSet->Fetch())
 		{
-			if ($oCurrObj->Get('geo'))
+			if ($oCurrObj->Get($this->aProperties['attribute']))
 			{
 				$aLocations[] = array(
 					'title' => $oCurrObj->GetName(),
 					'icon' => $oCurrObj->GetIcon(false),
-					'position' => $oCurrObj->Get('geo'),
+					'position' => $oCurrObj->Get($this->aProperties['attribute']),
 					'tooltip' => static::GetTooltip($oCurrObj),
 				);
 			}
@@ -385,12 +386,15 @@ $(function() {
 		$oHeightField = new DesignerIntegerField('height', Dict::S('UI:DashletGeoMap:Prop-Height'), $this->aProperties['height']);
 		$oForm->AddField($oHeightField);
 		
-		if (is_null(static::$aAttributeList)) static::$aAttributeList = static::FindGeolocationAttributes();
+		$oQueryField = new DesignerLongTextField('query', Dict::S('UI:DashletGeoMap:Prop-Query'), $this->aProperties['query']);
+		$oQueryField->SetMandatory();
+		$oForm->AddField($oQueryField);
 		
-		$oAttributeField = new DesignerComboField('attribute', 'attribute', $this->aProperties['attribute']);
-		$oAttributeField->SetAllowedValues(static::$aAttributeList);
+		$sClass = $this->oModelReflection->GetQuery($this->aProperties['query'])->GetClass();
+		$oAttributeField = new DesignerComboField('attribute', Dict::S('UI:DashletGeoMap:Prop-Attribute'), $this->aProperties['attribute']);
+		$oAttributeField->SetAllowedValues(static::GetGeolocationAttributes($sClass));
+		$oAttributeField->SetMandatory();
 		$oForm->AddField($oAttributeField);
-		
 	}
 	
 	/**
@@ -421,16 +425,25 @@ $(function() {
 		return $sTooltip;
 	}
 	
-	protected static function FindGeolocationAttributes()
+	/**
+	 * @param string $sClass
+	 * @return array
+	 * @throws CoreException
+	 */
+	protected static function GetGeolocationAttributes($sClass)
 	{
+		if(isset(static::$aAttributeList[$sClass])) return static::$aAttributeList[$sClass];
+		
 		$aAttributes = array();
-		foreach (MetaModel::GetClasses() as $sClass) foreach (MetaModel::ListAttributeDefs($sClass) as $sAttribute => $oAttributeDef)
+		foreach (MetaModel::ListAttributeDefs($sClass) as $sAttribute => $oAttributeDef)
 		{
 			if (is_a($oAttributeDef, 'AttributeGeolocation'))
 			{
-				$aAttributes[$sClass.'.'.$sAttribute] = MetaModel::GetName($sClass).' / '.$oAttributeDef->GetLabel();
+				$aAttributes[$sAttribute] = $oAttributeDef->GetLabel();
 			}
 		}
+		static::$aAttributeList[$sClass] = $aAttributes;
+		
 		return $aAttributes;
 	}
 }

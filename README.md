@@ -112,6 +112,10 @@ Display rank.
 * height _(optional)_
 Height of the interactive map.
 Defaults to 600.
+* query _(mandatory)_
+The OQL query to select the objects to be placed on the map.
+* attribute _(mandatory)_
+The geolocation attribute to use for placing the object on the map.
 
 ### Example
 
@@ -119,6 +123,8 @@ Defaults to 600.
 <dashlet id="1" xsi:type="GeoMap">
     <rank>1</rank>
     <height>500</height>
+    <query>SELECT Location</query>
+    <attribute>geo</attribute>
 </dashlet>
 ```
 
