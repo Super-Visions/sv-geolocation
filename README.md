@@ -65,6 +65,8 @@ This is the default longitude when a new dashlet is displayed.
 ### default_zoom
 
 This is the default zoom for dashlet maps and for static maps.
+Note that by default, the static map from Google Maps have a dynamic zoom level.
+If you want a fixed zoom level, you will need to reflect this in the parameter `staticmapurl`. 
 
 XML Data Model Reference
 ------------------------
