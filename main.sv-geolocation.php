@@ -384,6 +384,7 @@ $(function() {
 	public function GetPropertiesFields(DesignerForm $oForm)
 	{
 		$oHeightField = new DesignerIntegerField('height', Dict::S('UI:DashletGeoMap:Prop-Height'), $this->aProperties['height']);
+		$oHeightField->SetMandatory();
 		$oForm->AddField($oHeightField);
 		
 		$oQueryField = new DesignerLongTextField('query', Dict::S('UI:DashletGeoMap:Prop-Query'), $this->aProperties['query']);
@@ -396,7 +397,7 @@ $(function() {
 			$oAttributeField->SetAllowedValues(static::GetGeolocationAttributes($sClass));
 			$oAttributeField->SetMandatory();
 		}
-		catch (Exception $e)
+		catch (OQLException $e)
 		{
 			$oAttributeField = new DesignerStaticTextField('attribute', Dict::S('UI:DashletGeoMap:Prop-Attribute'));
 		}
