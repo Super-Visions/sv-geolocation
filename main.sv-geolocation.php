@@ -407,6 +407,32 @@ $(function() {
 	}
 	
 	/**
+	 * @param array $aValues
+	 * @param array $aUpdatedFields
+	 * @return Dashlet
+	 */
+	public function Update($aValues, $aUpdatedFields)
+	{
+		if (in_array('query', $aUpdatedFields))
+		{
+			try {
+				$sCurrClass = $this->oModelReflection->GetQuery($aValues['query'])->GetClass();
+				$sPrevClass = $this->oModelReflection->GetQuery($this->aProperties['query'])->GetClass();
+				
+				if ($sCurrClass != $sPrevClass) {
+					$this->bFormRedrawNeeded = true;
+				}
+			}
+			catch (OQLException $e)
+			{
+				$this->bFormRedrawNeeded = true;
+			}
+		}
+		
+		return parent::Update($aValues, $aUpdatedFields);
+	}
+	
+	/**
 	 * Dashlet info
 	 * @return array
 	 * @throws DictExceptionMissingString
