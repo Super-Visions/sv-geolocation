@@ -83,7 +83,7 @@ class AttributeGeolocation extends AttributeDBField
 	{
 		if ($proposedValue instanceof ormGeolocation) return $proposedValue;
 		
-		if(preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($proposedValue), $aMatches))
+		if (preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($proposedValue), $aMatches))
 		{
 			return new ormGeolocation($aMatches[1], $aMatches[2]);
 		}
@@ -432,7 +432,7 @@ $(function() {
 	 */
 	protected static function GetGeolocationAttributes($sClass)
 	{
-		if(isset(static::$aAttributeList[$sClass])) return static::$aAttributeList[$sClass];
+		if (isset(static::$aAttributeList[$sClass])) return static::$aAttributeList[$sClass];
 		
 		$aAttributes = array();
 		foreach (MetaModel::ListAttributeDefs($sClass) as $sAttribute => $oAttributeDef)
