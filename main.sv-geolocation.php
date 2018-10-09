@@ -390,11 +390,20 @@ $(function() {
 		$oQueryField->SetMandatory();
 		$oForm->AddField($oQueryField);
 		
-		$sClass = $this->oModelReflection->GetQuery($this->aProperties['query'])->GetClass();
-		$oAttributeField = new DesignerComboField('attribute', Dict::S('UI:DashletGeoMap:Prop-Attribute'), $this->aProperties['attribute']);
-		$oAttributeField->SetAllowedValues(static::GetGeolocationAttributes($sClass));
-		$oAttributeField->SetMandatory();
-		$oForm->AddField($oAttributeField);
+		try {
+			$sClass = $this->oModelReflection->GetQuery($this->aProperties['query'])->GetClass();
+			$oAttributeField = new DesignerComboField('attribute', Dict::S('UI:DashletGeoMap:Prop-Attribute'), $this->aProperties['attribute']);
+			$oAttributeField->SetAllowedValues(static::GetGeolocationAttributes($sClass));
+			$oAttributeField->SetMandatory();
+		}
+		catch (Exception $e)
+		{
+			$oAttributeField = new DesignerStaticTextField('attribute', Dict::S('UI:DashletGeoMap:Prop-Attribute'));
+		}
+		finally
+		{
+			$oForm->AddField($oAttributeField);
+		}
 	}
 	
 	/**
