@@ -1,0 +1,17 @@
+diff --git a/application/cmdbabstract.class.inc.php b/application/cmdbabstract.class.inc.php
+index 5b7e1db88..248b9f3e3 100644
+--- a/application/cmdbabstract.class.inc.php
++++ b/application/cmdbabstract.class.inc.php
+@@ -2137,6 +2137,12 @@ EOF
+ 					// validate is triggered by CheckFields, on all the input fields, once at page init and once before submitting the form
+ 					$oPage->add_ready_script("$('#{$iId}').bind('validate', function(evt, sFormId) { return ValidateCustomFields('$iId', sFormId) } );"); // Custom validation function
+ 					break;
++					
++				case 'GeoLocation':
++					$aEventsList[] ='validate';
++					$aEventsList[] ='change';
++					$sHTMLValue = $oAttDef->GetFormElement($oPage, $value, $sDisplayValue, $iId, $sNameSuffix, $sFieldPrefix).$sValidationSpan.$sReloadSpan;
++					break;
+ 
+ 				case 'String':
+ 				default:
