@@ -144,3 +144,6 @@ Preview
 
 ### Location list view
 ![Location list](images/preview-location-list.png "List view of locations from example data")
+
+### Dashboard Dashlet
+![GeoMap Dashlet](images/preview-dashlet.png "Dashlet with some example locations")
