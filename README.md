@@ -76,6 +76,12 @@ This is the default zoom for dashlet maps and for static maps.
 Note that by default, the static map from Google Maps have a dynamic zoom level.
 If you want a fixed zoom level, you will need to reflect this in the parameter `staticmapurl`. 
 
+### display_coordinates
+
+This value specifies if the coordinates of the geolocation also should be shown under the thumbnail.
+This is enabled by default.
+Note that when you don't have thumbnails, the coordinates will always be displayed.
+
 XML Data Model Reference
 ------------------------
 

@@ -108,14 +108,16 @@ class AttributeGeolocation extends AttributeDBField
 			$iHeight = $this->GetHeight();
 			$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 			$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
+			$bDisplay = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'display_coordinates');
 			$sStaticMapUrl = sprintf(static::GetStaticMapUrl(), $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight, $sApiKey, $iZoom);
 			if (empty($sStaticMapUrl))
 			{
-				$sHTML = '<pre>'.$value.'</pre>';
+				$sHTML = sprintf('<pre>%s</pre>', $value);
 			}
 			else
 			{
-				$sHTML = sprintf('<img src="%s" width="%d" height="%d"/>', $sStaticMapUrl, $iWidth, $iHeight);
+				$sHTML = sprintf('<img src="%s" width="%d" height="%d" title="%s"/>', $sStaticMapUrl, $iWidth, $iHeight, $value);
+				if ($bDisplay) $sHTML .= sprintf('<pre>%s</pre>', $value);
 			}
 		}
 		else
