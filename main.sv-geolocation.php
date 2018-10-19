@@ -351,7 +351,7 @@ $(function() {
 		zoom: ".$iZoom."
 	});
 	
-	var locations = ".json_encode($aLocations)."
+	var locations = ".json_encode($aLocations).";
 	
 	locations.map(function(location, i){
 		var marker = new google.maps.Marker({
