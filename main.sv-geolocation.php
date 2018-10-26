@@ -403,10 +403,8 @@ $(function() {
 		{
 			$oAttributeField = new DesignerStaticTextField('attribute', Dict::S('UI:DashletGeoMap:Prop-Attribute'));
 		}
-		finally
-		{
-			$oForm->AddField($oAttributeField);
-		}
+		
+		$oForm->AddField($oAttributeField);
 	}
 	
 	/**
