@@ -180,6 +180,7 @@ class AttributeGeolocation extends AttributeDBField
 	 * @param string $sNameSuffix
 	 * @param string $sFieldPrefix
 	 * @return string
+	 * @throws Exception
 	 */
 	public function GetFormElement(iTopWebPage $oPage, $value, $sDisplayValue, $iId, $sNameSuffix = '', $sFieldPrefix = '')
 	{
@@ -314,6 +315,7 @@ class GeoMap extends Dashlet
 	 * @param bool $bEditMode
 	 * @param array $aExtraParams
 	 * @return mixed
+	 * @throws CoreException
 	 */
 	public function Render($oPage, $bEditMode = false, $aExtraParams = array())
 	{
@@ -436,7 +438,6 @@ $(function() {
 	/**
 	 * Dashlet info
 	 * @return array
-	 * @throws DictExceptionMissingString
 	 */
 	public static function GetInfo()
 	{
@@ -451,11 +452,11 @@ $(function() {
 	{
 		$sClass = get_class($oCurrObj);
 		$sTooltip = $oCurrObj->GetHyperlink().'<hr/>'.PHP_EOL;
-		$sTooltip .= '<table><tbody>';
+		$sTooltip .= '<table><tbody>'.PHP_EOL;
 		foreach(MetaModel::GetZListItems($sClass, 'list') as $sAttCode)
 		{
 			$oAttDef = MetaModel::GetAttributeDef($sClass, $sAttCode);
-			$sTooltip .= '<tr><td>'.$oAttDef->GetLabel().':&nbsp;</td><td>'.$oCurrObj->GetAsHtml($sAttCode).'</td></tr>';
+			$sTooltip .= '<tr><td>'.$oAttDef->GetLabel().':&nbsp;</td><td>'.$oCurrObj->GetAsHtml($sAttCode).'</td></tr>'.PHP_EOL;
 		}
 		$sTooltip .= '</tbody></table>';
 		return $sTooltip;
