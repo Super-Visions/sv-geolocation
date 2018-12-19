@@ -62,6 +62,9 @@ Example values for `staticmapurl`:
 * [MapQuest](https://developer.mapquest.com/documentation/static-map-api/v5/):
 `https://www.mapquestapi.com/staticmap/v5/map?locations=%f,%f&size=%d,%d&key=%s&zoom=%d`
 
+Note that you can also use [QR Code Generator](http://goqr.me/api/doc/create-qr-code/) as thumbnail generator.
+The resulting value for `staticmapurl` then looks like: `https://api.qrserver.com/v1/create-qr-code/?data=geo:%f,%f&size=%dx%d&bgcolor=eee`
+
 ### default_latitude
 
 This is the default latitude when a new dashlet is displayed.
