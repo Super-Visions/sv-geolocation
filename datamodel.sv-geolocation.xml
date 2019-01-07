@@ -31,6 +31,16 @@
 				<entry id="UI:DashletGeoMap:Prop-Query" _delta="define">Query</entry>
 			</entries>
 		</dictionary>
+		<dictionary id="FR FR">
+			<entries>
+				<entry id="Class:Location/Attribute:geo" _delta="define"><![CDATA[Géolocalisation]]></entry>
+				<entry id="Core:AttributeGeolocation" _delta="define"><![CDATA[Géolocalisation]]></entry>
+				<entry id="Core:AttributeGeolocation+" _delta="define"><![CDATA[Coordonnées géographiques]]></entry>
+				<entry id="UI:DashletGeoMap:Prop-Attribute" _delta="define"><![CDATA[Attribut]]></entry>
+				<entry id="UI:DashletGeoMap:Prop-Height" _delta="define"><![CDATA[Hauteur]]></entry>
+				<entry id="UI:DashletGeoMap:Prop-Query" _delta="define"><![CDATA[Requête]]></entry>
+			</entries>
+		</dictionary>
 		<dictionary id="NL NL">
 			<entries>
 				<entry id="Class:Location/Attribute:geo" _delta="define">Geolocatie</entry>
