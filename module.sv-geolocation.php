@@ -25,6 +25,7 @@ SetupWebPage::AddModule(
 		'datamodel' => array(
 			'main.sv-geolocation.php',
 			'geomap.class.inc.php',
+			'interactiveform.class.inc.php',
 		),
 		'webservice' => array(
 

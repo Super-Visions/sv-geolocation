@@ -11,14 +11,6 @@ Installation
 Place this in the `extensions` folder of your iTop instance and run iTop setup again.
 Be sure to enable the extension during setup.
 
-If you want to have an interactive map for the location input instead of a regular textfield, a patch to the iTop code is required.
-Run the following command from the iTop base folder:
-```bash
-patch --dry-run -p1 -i env-production/sv-geolocation/patch.iTop-2-5-0.diff
-```
-If this command does not show any errors you can run in again and do the actual patch by omitting the `--dry-run` parameter.
-Note: There is also a patch file available for iTop 2.4
-
 Configuration
 -------------
 
