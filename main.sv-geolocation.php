@@ -85,7 +85,7 @@ class AttributeGeolocation extends AttributeDBField
 		
 		if (preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($proposedValue), $aMatches))
 		{
-			return new ormGeolocation($aMatches[1], $aMatches[2]);
+			return new ormGeolocation(floatval($aMatches[1]), floatval($aMatches[2]));
 		}
 		else
 		{
