@@ -36,12 +36,42 @@ class GeoMap extends Dashlet
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
 		
+		$sSearch = Dict::S('UI:Button:Search');
+		$oPage->add_dict_entry('UI:ClickToCreateNew');
+		
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
-		$sStyle = sprintf("height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $this->aProperties['height'], MetaModel::GetEnvironment());
-		$oPage->add(sprintf('<div id="%s" class="dashlet-content" style="%s"></div>', $sId, $sStyle));
+		$sBackgroundUrl = sprintf('/env-%s/sv-geolocation/images/world-map.jpg', MetaModel::GetEnvironment());
+		
+		$oPage->add_style(<<<STYLE
+#{$sId} {
+	height: {$this->aProperties['height']}px;
+	background: url('{$sBackgroundUrl}') 50%/contain no-repeat;
+}
+
+#{$sId}_panel {
+	position: absolute;
+	left: 40%;
+	z-index: 5;
+	margin: 10px;
+	
+	padding: 10px;
+	box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+	background-color: white;
+}
+STYLE
+);
+		
+		$oPage->add(<<<HTML
+<div id= class="dashlet-content">
+	<div id="{$sId}_panel"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
+	<div id="{$sId}"></div>
+</div>
+HTML
+);
 		
 		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
 		$oSet = new DBObjectSet($oFilter);
+		$sClassLabel = MetaModel::GetName($oFilter->GetClass());
 		
 		$aLocations = array();
 		while ($oCurrObj = $oSet->Fetch())
@@ -57,37 +87,83 @@ class GeoMap extends Dashlet
 			}
 		}
 		
-		$oPage->add_script("
-var ".$sId.";
+		$sLocations = json_encode($aLocations);
+		$sCreateUrl = '';
+		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
+		{
+			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
+		}
+		
+		$oPage->add_script(<<<SCRIPT
 $(function() {
-	".$sId." = new google.maps.Map(document.getElementById('".$sId."'), {
-		center: {lat: ".$iDefaultLat.", lng: ".$iDefaultLng."},
-		zoom: ".$iZoom."
+	var oMap = new google.maps.Map(document.getElementById('{$sId}'), {
+		center: {lat: {$iDefaultLat}, lng: {$iDefaultLng}},
+		zoom: {$iZoom}
 	});
+	var oGeo = new google.maps.Geocoder();
+	var aLocations = {$sLocations};
+	var sCreateUrl = '{$sCreateUrl}';
 	
-	var locations = ".json_encode($aLocations).";
-	
-	locations.map(function(location, i){
-		var marker = new google.maps.Marker({
-			position: location.position,
-			icon: location.icon,
-			title: location.title,
-			map: ".$sId."
+	aLocations.map(function(oLocation, i) {
+		var oMarker = new google.maps.Marker({
+			position: oLocation.position,
+			icon: oLocation.icon,
+			title: oLocation.title,
+			map: oMap
 		});
 		
-		var tooltip = new google.maps.InfoWindow({
-          content: location.tooltip
+		var oTooltip = new google.maps.InfoWindow({
+          content: oLocation.tooltip
         });
         
-        marker.addListener('click', function() {
-          tooltip.open(".$sId.", marker);
+        oMarker.addListener('click', function() {
+          oTooltip.open(oMap, oMarker);
         });
 	});
 	
+	// add additional marker
+	var oMarker = new google.maps.Marker();
 	
+	// add create object functionality
+	if (sCreateUrl) {
+		oMarker.setDraggable(true);
+		oMarker.setTitle(Dict.Format('UI:ClickToCreateNew', '{$sClassLabel}'));
+		oMarker.setCursor('copy');
+		
+		// create object
+		oMarker.addListener('click', function() {
+			window.location = sCreateUrl + oMarker.getPosition().toUrlValue();
+		});
+	}
 	
-});");
+	// remove marker
+	oMarker.addListener('rightclick', function() {
+		oMarker.setMap();
+	});
 	
+	// set marker to location
+	oMap.addListener( 'click', function (event) {
+		oMarker.setPosition(event.latLng);
+		oMap.panTo(event.latLng);
+		oMarker.setMap(oMap);
+	});
+	
+	// search location
+	document.getElementById('{$sId}_submit').addEventListener('click', function() {
+		var sAddress = document.getElementById('{$sId}_address').value;
+		oGeo.geocode({address: sAddress, bounds: oMap.getBounds()}, function(results, status) {
+			if (status === 'OK') {
+				oMap.setCenter(results[0].geometry.location);
+				oMarker.setPosition(results[0].geometry.location);
+				oMarker.setMap(oMap);
+			} else {
+				console.log('Geocode was not successful for the following reason: ' + status);
+			}
+        });
+	});
+});
+SCRIPT
+		);
 	}
 	
 	/**
