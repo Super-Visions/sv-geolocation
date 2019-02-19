@@ -23,8 +23,6 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 	{
 		if (!$bEditMode) return;
 		
-		$oPage->p('Test, here will come some extra code..');
-		
 		$aAttributes = MetaModel::FlattenZList(MetaModel::GetZListItems(get_class($oObject), 'details'));
 		foreach($aAttributes as $sAttCode)
 		{
