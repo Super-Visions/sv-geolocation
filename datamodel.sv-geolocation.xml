@@ -29,6 +29,7 @@
 				<entry id="UI:DashletGeoMap:Prop-Attribute" _delta="define">Attribute</entry>
 				<entry id="UI:DashletGeoMap:Prop-Height" _delta="define">Height</entry>
 				<entry id="UI:DashletGeoMap:Prop-Query" _delta="define">Query</entry>
+				<entry id="UI:DashletGeoMap:Prop-Search" _delta="define">Search</entry>
 			</entries>
 		</dictionary>
 		<dictionary id="FR FR">
@@ -39,6 +40,7 @@
 				<entry id="UI:DashletGeoMap:Prop-Attribute" _delta="define"><![CDATA[Attribut]]></entry>
 				<entry id="UI:DashletGeoMap:Prop-Height" _delta="define"><![CDATA[Hauteur]]></entry>
 				<entry id="UI:DashletGeoMap:Prop-Query" _delta="define"><![CDATA[Requête]]></entry>
+				<entry id="UI:DashletGeoMap:Prop-Search" _delta="define"><![CDATA[Recherche]]></entry>
 			</entries>
 		</dictionary>
 		<dictionary id="NL NL">
@@ -49,6 +51,7 @@
 				<entry id="UI:DashletGeoMap:Prop-Attribute" _delta="define">Attribuut</entry>
 				<entry id="UI:DashletGeoMap:Prop-Height" _delta="define">Hoogte</entry>
 				<entry id="UI:DashletGeoMap:Prop-Query" _delta="define">Query</entry>
+				<entry id="UI:DashletGeoMap:Prop-Search" _delta="define">Zoekfunctie</entry>
 			</entries>
 		</dictionary>
 	</dictionaries>

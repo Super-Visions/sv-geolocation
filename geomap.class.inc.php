@@ -16,6 +16,7 @@ class GeoMap extends Dashlet
 	{
 		parent::__construct($oModelReflection, $sId);
 		$this->aProperties['height'] = 600;
+		$this->aProperties['search'] = false;
 		$this->aProperties['query'] = 'SELECT Location';
 		$this->aProperties['attribute'] = '';
 	}
@@ -37,6 +38,7 @@ class GeoMap extends Dashlet
 		$sBackgroundUrl = sprintf('/env-%s/sv-geolocation/images/world-map.jpg', MetaModel::GetEnvironment());
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
 		$sSearch = Dict::S('UI:Button:Search');
+		$sDisplaySearch = $this->aProperties['search'] ? 'block' : 'none';
 		
 		// Prepare page
 		$oPage->add_dict_entry('UI:ClickToCreateNew');
@@ -57,7 +59,7 @@ STYLE
 		
 		$oPage->add(<<<HTML
 <div id= class="dashlet-content">
-	<div id="{$sId}_panel" class="map_panel"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
+	<div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
 	<div id="{$sId}" style="height: {$this->aProperties['height']}px; background: url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
 </div>
 HTML
@@ -174,6 +176,9 @@ SCRIPT
 		$oHeightField = new DesignerIntegerField('height', Dict::S('UI:DashletGeoMap:Prop-Height'), $this->aProperties['height']);
 		$oHeightField->SetMandatory();
 		$oForm->AddField($oHeightField);
+		
+		$oSearchField = new DesignerBooleanField('search', Dict::S('UI:DashletGeoMap:Prop-Search'), $this->aProperties['search']);
+		$oForm->AddField($oSearchField);
 		
 		$oQueryField = new DesignerLongTextField('query', Dict::S('UI:DashletGeoMap:Prop-Query'), $this->aProperties['query']);
 		$oQueryField->SetMandatory();
