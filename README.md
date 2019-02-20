@@ -89,7 +89,7 @@ The column used to store the value into the MySQL database.
 * default_value _(mandatory)_
 The default value (can be specified as an empty string).
 * is_null_allowed _(mandatory)_
-Set to "true" to let users leave this value undefined, false otherwise.
+Set to "true" to let users leave this value undefined, "false" otherwise.
 * width _(optional)_
 Width of the static image, in pixels.
 Defaults to 200.
