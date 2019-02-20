@@ -55,4 +55,19 @@
 			</entries>
 		</dictionary>
 	</dictionaries>
+	<meta>
+		<dashlets>
+			<dashlet id="GeoMap" _delta="define">
+				<label>GeoMap</label>
+				<icon>sv-geolocation/images/geomap.png</icon>
+				<description>Add interactive map as dashlet.</description>
+				<configuration>
+					<height>600</height>
+					<search>false</search>
+					<query>SELECT Location</query>
+					<attribute></attribute>
+				</configuration>
+			</dashlet>
+		</dashlets>
+	</meta>
 </itop_design>
