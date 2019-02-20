@@ -29,26 +29,20 @@ class GeoMap extends Dashlet
 	 */
 	public function Render($oPage, $bEditMode = false, $aExtraParams = array())
 	{
+		// Load values
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
-		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
-		
 		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
-		
-		$sSearch = Dict::S('UI:Button:Search');
-		$oPage->add_dict_entry('UI:ClickToCreateNew');
-		
-		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
 		$sBackgroundUrl = sprintf('/env-%s/sv-geolocation/images/world-map.jpg', MetaModel::GetEnvironment());
+		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
+		$sSearch = Dict::S('UI:Button:Search');
 		
+		// Prepare page
+		$oPage->add_dict_entry('UI:ClickToCreateNew');
+		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
 		$oPage->add_style(<<<STYLE
-#{$sId} {
-	height: {$this->aProperties['height']}px;
-	background: url('{$sBackgroundUrl}') 50%/contain no-repeat;
-}
-
-#{$sId}_panel {
+.map_panel {
 	position: absolute;
 	left: 40%;
 	z-index: 5;
@@ -59,16 +53,19 @@ class GeoMap extends Dashlet
 	background-color: white;
 }
 STYLE
-);
+		);
 		
 		$oPage->add(<<<HTML
 <div id= class="dashlet-content">
-	<div id="{$sId}_panel"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
-	<div id="{$sId}"></div>
+	<div id="{$sId}_panel" class="map_panel"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
+	<div id="{$sId}" style="height: {$this->aProperties['height']}px; background: url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
 </div>
 HTML
-);
+		);
 		
+		if ($bEditMode) return;
+		
+		// Load objects
 		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
 		$oSet = new DBObjectSet($oFilter);
 		$sClassLabel = MetaModel::GetName($oFilter->GetClass());
@@ -86,14 +83,15 @@ HTML
 				);
 			}
 		}
-		
 		$sLocations = json_encode($aLocations);
+		
 		$sCreateUrl = '';
 		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
 		{
 			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
 		}
 		
+		// Make interactive
 		$oPage->add_script(<<<SCRIPT
 $(function() {
 	var oMap = new google.maps.Map(document.getElementById('{$sId}'), {
