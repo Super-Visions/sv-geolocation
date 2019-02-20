@@ -20,6 +20,33 @@
 			</presentation>
 		</class>
 	</classes>
+	<menus>
+		<menu id="Location" xsi:type="DashboardMenuNode" _created_in="itop-config-mgmt" _delta="redefine">
+			<rank>3</rank>
+			<parent>ConfigManagement</parent>
+			<definition>
+				<layout>DashboardLayoutOneCol</layout>
+				<title>Menu:Location</title>
+				<cells>
+					<cell id="0">
+						<rank>0</rank>
+						<dashlets>
+							<dashlet id="map" xsi:type="GeoMap">
+								<rank>0</rank>
+								<query>SELECT Location</query>
+								<attribute>geo</attribute>
+							</dashlet>
+							<dashlet id="list" xsi:type="DashletObjectList">
+								<rank>1</rank>
+								<query>SELECT Location</query>
+								<menu>true</menu>
+							</dashlet>
+						</dashlets>
+					</cell>
+				</cells>
+			</definition>
+		</menu>
+	</menus>
 	<dictionaries>
 		<dictionary id="EN US">
 			<entries>
