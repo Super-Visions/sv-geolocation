@@ -56,7 +56,7 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 				
 				$sLocation = json_encode($oObject->Get($oAttDef->GetCode()));
 				$sCenter = ($sLocation == 'null') ? json_encode(array('lat' => $iDefaultLat, 'lng' => $iDefaultLng)) : $sLocation;
-				$sStyle = sprintf("width: %dpx; height: %dpx; background: url('/env-%s/sv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $oAttDef->GetWidth(), $oAttDef->GetHeight(), MetaModel::GetEnvironment());
+				$sStyle = sprintf("width: %dpx; height: %dpx; background: url('%ssv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $oAttDef->GetWidth(), $oAttDef->GetHeight(), utils::GetAbsoluteUrlModulesRoot());
 				
 				$oPage->add_script(<<<"SCRIPT"
 $(function () {

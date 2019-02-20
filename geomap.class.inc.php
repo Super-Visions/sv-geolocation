@@ -35,7 +35,7 @@ class GeoMap extends Dashlet
 		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
-		$sBackgroundUrl = sprintf('/env-%s/sv-geolocation/images/world-map.jpg', MetaModel::GetEnvironment());
+		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/images/world-map.jpg';
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
 		$sSearch = Dict::S('UI:Button:Search');
 		$sDisplaySearch = $this->aProperties['search'] ? 'block' : 'none';
