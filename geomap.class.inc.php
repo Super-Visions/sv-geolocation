@@ -35,14 +35,17 @@ class GeoMap extends Dashlet
 		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
-		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/images/world-map.jpg';
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
-		$sSearch = Dict::S('UI:Button:Search');
-		$sDisplaySearch = $this->aProperties['search'] ? 'block' : 'none';
+		
+		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
+		$sCreateUrl = null;
+		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
+		{
+			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
+		}
 		
 		// Prepare page
 		$oPage->add_dict_entry('UI:ClickToCreateNew');
-		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
 		$oPage->add_style(<<<STYLE
 .map_panel {
 	position: absolute;
@@ -57,27 +60,34 @@ class GeoMap extends Dashlet
 STYLE
 		);
 		
+		$sDisplaySearch = $this->aProperties['search'] ? 'block' : 'none';
+		$sSearch = Dict::S('UI:Button:Search');
+		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/images/world-map.jpg';
 		$oPage->add(<<<HTML
 <div id= class="dashlet-content">
 	<div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
-	<div id="{$sId}" style="height: {$this->aProperties['height']}px; background: url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
+	<div id="{$sId}" style="height: {$this->aProperties['height']}px; background: white url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
 </div>
 HTML
 		);
 		
 		if ($bEditMode) return;
 		
-		// Load objects
-		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
-		$oSet = new DBObjectSet($oFilter);
-		$sClassLabel = MetaModel::GetName($oFilter->GetClass());
+		$aDashletOptions = array(
+			'id' => $sId,
+			'classLabel' => MetaModel::GetName($oFilter->GetClass()),
+			'createUrl' => $sCreateUrl,
+			'map' => array('center' => array('lat' => $iDefaultLat, 'lng' => $iDefaultLng), 'zoom' => $iZoom),
+			'locations' => array(),
+		);
 		
-		$aLocations = array();
+		// Load objects
+		$oSet = new DBObjectSet($oFilter);
 		while ($oCurrObj = $oSet->Fetch())
 		{
 			if ($oCurrObj->Get($this->aProperties['attribute']))
 			{
-				$aLocations[] = array(
+				$aDashletOptions['locations'][] = array(
 					'title' => $oCurrObj->GetName(),
 					'icon' => $oCurrObj->GetIcon(false),
 					'position' => $oCurrObj->Get($this->aProperties['attribute']),
@@ -85,85 +95,11 @@ HTML
 				);
 			}
 		}
-		$sLocations = json_encode($aLocations);
-		
-		$sCreateUrl = '';
-		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
-		{
-			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
-		}
 		
 		// Make interactive
-		$oPage->add_script(<<<SCRIPT
-$(function() {
-	var oMap = new google.maps.Map(document.getElementById('{$sId}'), {
-		center: {lat: {$iDefaultLat}, lng: {$iDefaultLng}},
-		zoom: {$iZoom}
-	});
-	var oGeo = new google.maps.Geocoder();
-	var aLocations = {$sLocations};
-	var sCreateUrl = '{$sCreateUrl}';
-	
-	aLocations.map(function(oLocation, i) {
-		var oMarker = new google.maps.Marker({
-			position: oLocation.position,
-			icon: oLocation.icon,
-			title: oLocation.title,
-			map: oMap
-		});
-		
-		var oTooltip = new google.maps.InfoWindow({
-          content: oLocation.tooltip
-        });
-        
-        oMarker.addListener('click', function() {
-          oTooltip.open(oMap, oMarker);
-        });
-	});
-	
-	// add additional marker
-	var oMarker = new google.maps.Marker();
-	
-	// add create object functionality
-	if (sCreateUrl) {
-		oMarker.setDraggable(true);
-		oMarker.setTitle(Dict.Format('UI:ClickToCreateNew', '{$sClassLabel}'));
-		oMarker.setCursor('copy');
-		
-		// create object
-		oMarker.addListener('click', function() {
-			window.location = sCreateUrl + oMarker.getPosition().toUrlValue();
-		});
-	}
-	
-	// remove marker
-	oMarker.addListener('rightclick', function() {
-		oMarker.setMap();
-	});
-	
-	// set marker to location
-	oMap.addListener( 'click', function (event) {
-		oMarker.setPosition(event.latLng);
-		oMap.panTo(event.latLng);
-		oMarker.setMap(oMap);
-	});
-	
-	// search location
-	document.getElementById('{$sId}_submit').addEventListener('click', function() {
-		var sAddress = document.getElementById('{$sId}_address').value;
-		oGeo.geocode({address: sAddress, bounds: oMap.getBounds()}, function(results, status) {
-			if (status === 'OK') {
-				oMap.setCenter(results[0].geometry.location);
-				oMarker.setPosition(results[0].geometry.location);
-				oMarker.setMap(oMap);
-			} else {
-				console.log('Geocode was not successful for the following reason: ' + status);
-			}
-        });
-	});
-});
-SCRIPT
-		);
+		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
+		$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
+		$oPage->add_ready_script(sprintf('render_geomap(%s);', json_encode($aDashletOptions)));
 	}
 	
 	/**

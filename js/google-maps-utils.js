@@ -72,3 +72,66 @@ function map_save_location(oField, oLatLng) {
     if (oLatLng) oField.val(oLatLng.lat() + ',' + oLatLng.lng());
     else oField.val('');
 }
+
+function render_geomap(oDashlet, aLocations) {
+    var oMap = new google.maps.Map(document.getElementById(oDashlet.id), oDashlet.map);
+    var oGeo = new google.maps.Geocoder();
+
+    oDashlet.locations.map(function (oLocation) {
+        var oMarker = new google.maps.Marker({
+            position: oLocation.position,
+            icon: oLocation.icon,
+            title: oLocation.title,
+            map: oMap
+        });
+
+        var oTooltip = new google.maps.InfoWindow({
+            content: oLocation.tooltip
+        });
+
+        oMarker.addListener('click', function () {
+            oTooltip.open(oMap, oMarker);
+        });
+    });
+
+    // add additional marker
+    var oMarker = new google.maps.Marker();
+
+    // add create object functionality
+    if (oDashlet.createUrl) {
+        oMarker.setDraggable(true);
+        oMarker.setTitle(Dict.Format('UI:ClickToCreateNew', oDashlet.classLabel));
+        oMarker.setCursor('copy');
+
+        // create object
+        oMarker.addListener('click', function () {
+            window.location = AddAppContext(oDashlet.createUrl + oMarker.getPosition().toUrlValue());
+        });
+    }
+
+    // remove marker
+    oMarker.addListener('rightclick', function () {
+        oMarker.setMap();
+    });
+
+    // set marker to location
+    oMap.addListener('click', function (event) {
+        oMarker.setPosition(event.latLng);
+        oMap.panTo(event.latLng);
+        oMarker.setMap(oMap);
+    });
+
+    // search location
+    document.getElementById(oDashlet.id + '_submit').addEventListener('click', function () {
+        var sAddress = document.getElementById(oDashlet.id + '_address').value;
+        oGeo.geocode({address: sAddress, bounds: oMap.getBounds()}, function (results, status) {
+            if (status === 'OK') {
+                oMap.setCenter(results[0].geometry.location);
+                oMarker.setPosition(results[0].geometry.location);
+                oMarker.setMap(oMap);
+            } else {
+                console.log('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    });
+}
