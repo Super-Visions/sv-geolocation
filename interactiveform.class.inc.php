@@ -48,71 +48,19 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
+		$bDisplay = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'display_coordinates');
 		
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
 				$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
+				$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
 				
-				$sLocation = json_encode($oObject->Get($oAttDef->GetCode()));
-				$sCenter = ($sLocation == 'null') ? json_encode(array('lat' => $iDefaultLat, 'lng' => $iDefaultLng)) : $sLocation;
-				$sStyle = sprintf("width: %dpx; height: %dpx; background: url('%ssv-geolocation/images/world-map.jpg') 50%%/contain no-repeat;", $oAttDef->GetWidth(), $oAttDef->GetHeight(), utils::GetAbsoluteUrlModulesRoot());
+				$oAttOptions = array('code' => $oAttDef->GetCode(), 'width' => $oAttDef->GetWidth(), 'height' => $oAttDef->GetHeight(), 'display' => $bDisplay);
+				$oMapOptions = array('center' => array('lat' => $iDefaultLat, 'lng' => $iDefaultLng), 'zoom' => $iZoom);
 				
-				$oPage->add_script(<<<"SCRIPT"
-$(function () {
-	var oFieldInputZone = $('.attribute-edit[data-attcode="{$oAttDef->GetCode()}"] .field_input_zone')[0];
-	
-	// hide input field
-	oFieldInputZone.classList.remove('field_input_string');
-	oFieldInputZone.classList.add('field_input_html');
-	var oFieldInput = oFieldInputZone.firstChild;
-	oFieldInput.setAttribute('type','hidden');
-	
-	// create map
-	var oMapDiv = document.createElement('div');
-	oMapDiv.setAttribute('style', "{$sStyle}");
-	oFieldInputZone.appendChild(oMapDiv);
-	var oMap = new google.maps.Map(oMapDiv, {center: {$sCenter}, zoom: {$iZoom}});
-	
-	// helper function
-	var save_location = function (latLng) {
-		if (latLng) oFieldInput.value = latLng.lat() + ',' + latLng.lng();
-		else oFieldInput.value = '';
-	};
-	
-	// create marker
-	var oMarker = new google.maps.Marker({
-		map: null,
-		draggable: true,
-		position: {$sLocation},
-	});
-	
-	// save marker location
-	oMarker.addListener('dragend', function () {
-		map.panTo(oMarker.position);
-		save_location(oMarker.position);
-	});
-	
-	// remove marker
-	oMarker.addListener('click', function(){
-		oMarker.setMap();
-		save_location();
-	});
-	
-	// set marker to location
-	oMap.addListener( 'click', function (event) {
-		oMarker.setPosition(event.latLng);
-		oMap.panTo(event.latLng);
-		save_location(event.latLng);
-		oMarker.setMap(oMap);
-	});
-	
-	if (oMarker.position) {
-		google.maps.event.trigger(oMap, 'click', {latLng: oMarker.position});
-	}
-});
-SCRIPT
-);
+				$oPage->add_ready_script(sprintf('make_interactive_map(%s, %s);', json_encode($oAttOptions), json_encode($oMapOptions)));
+				break;
 			default:
 				break;
 		}
