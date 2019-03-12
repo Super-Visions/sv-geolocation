@@ -3,7 +3,7 @@ function make_interactive_map(oAttOptions, oMapOptions) {
 
     // hide or disable input field
     var oFieldInput = oFieldInputZone.children();
-    if (oAttOptions.display) oFieldInput.prop('disabled', true);
+    if (oAttOptions.display) oFieldInput.prop('readonly', true);
     else oFieldInput.prop('type','hidden');
 
     // get location
