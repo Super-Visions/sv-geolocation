@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Set>
+	<Location alias="Location" id="1">
+		<geo>44.8422,-0.5705</geo>
+	</Location>
+	<Location alias="Location" id="2">
+		<geo>45.157344,5.750980</geo>
+	</Location>
+	<Location alias="Location" id="3">
+		<geo>48.868111,2.345349</geo>
+	</Location>
+</Set>

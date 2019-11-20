@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'sv-geolocation/1.1.1',
+	'sv-geolocation/1.2.0',
 	array(
 		// Identification
 		//
@@ -34,7 +34,7 @@ SetupWebPage::AddModule(
 			// add your 'structure' definition XML files here,
 		),
 		'data.sample' => array(
-			// add your sample data XML files here,
+			'data.sample.locations.xml',
 		),
 
 		// Documentation
