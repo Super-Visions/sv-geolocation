@@ -199,7 +199,7 @@ HTML
 		$aAttributes = array();
 		foreach (MetaModel::ListAttributeDefs($sClass) as $sAttribute => $oAttributeDef)
 		{
-			if (is_a($oAttributeDef, 'AttributeGeolocation'))
+			if (is_a($oAttributeDef, AttributeGeolocation::class))
 			{
 				$aAttributes[$sAttribute] = $oAttributeDef->GetLabel();
 			}
