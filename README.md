@@ -152,3 +152,11 @@ Preview
 
 ### Dashboard Dashlet
 ![GeoMap Dashlet](images/preview-dashlet.png "Dashlet with some example locations")
+
+Contribute
+----------
+
+### Translation
+
+Translations can be submitted via [Transifex](https://www.transifex.com/super-visions/sv-geolocation/).
+Please create a new issue if you want a new language to be added to the project.
