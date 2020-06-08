@@ -131,6 +131,31 @@ class AttributeGeolocation extends AttributeDBField
 	{
 		return (string) $sValue;
 	}
+
+	public function GetImportColumns()
+	{
+		$aColumns = array();
+		$aColumns[$this->GetCode()] = 'VARCHAR(25)'.CMDBSource::GetSqlStringColumnDefinition();
+
+		return $aColumns;
+	}
+
+	/**
+	 * @param array $aCols
+	 * @param string $sPrefix
+	 * @return ormGeolocation|null
+	 * @throws MissingColumnException
+	 */
+	public function FromImportToValue($aCols, $sPrefix = '')
+	{
+		if (!isset($aCols[$sPrefix]))
+		{
+			$sAvailable = implode(', ', array_keys($aCols));
+			throw new MissingColumnException("Missing column '$sPrefix' from {$sAvailable}");
+		}
+
+		return $this->MakeRealValue($aCols[$sPrefix], null);
+	}
 	
 	/**
 	 * @return int Width of the map
