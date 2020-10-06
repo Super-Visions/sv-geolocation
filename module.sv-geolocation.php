@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'sv-geolocation/1.3.0',
+	'sv-geolocation/1.4.0',
 	array(
 		// Identification
 		//
