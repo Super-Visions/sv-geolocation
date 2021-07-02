@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.4.0 - 2020-10-06
 ### Added
-- Portugese translation
+- Portuguese translation, thanks to [@rokam](https://www.transifex.com/user/profile/rokam/).
 
 ## 1.3.0 - 2020-06-08
 ### Added
@@ -15,11 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Diaeresis in Dutch translation.
-- Code cleanup
-- Import of objects with Geolocation field is now possible
+- Code cleanup.
+- Import of objects with Geolocation field is now possible.
 
 ### Removed
-- Support for iTop 2.3 and 2.4 in order to use php 5.6 
+- Support for iTop 2.3 and 2.4 in order to use php 5.6.
 
 ## 1.2.0 - 2019-11-21
 First public release.
