@@ -93,7 +93,24 @@ class AttributeGeolocation extends AttributeDBField
 			return;
 		}
 	}
-	
+
+	/**
+	 * Geolocation raw value always contains comma character
+	 *
+	 * @param string $sValue
+	 * @param string $sSeparator
+	 * @param string $sTextQualifier
+	 * @param \DBObject $oHostObject
+	 * @param bool $bLocalize
+	 * @param bool $bConvertToPlainText
+	 *
+	 * @return string
+	 */
+	public function GetAsCSV($sValue, $sSeparator = ',', $sTextQualifier = '"', $oHostObject = null, $bLocalize = true, $bConvertToPlainText = false) {
+		if (!empty($sValue) && strpos($sSeparator, ',') !== false) return $sTextQualifier.$sValue.$sTextQualifier;
+		return parent::GetAsCSV($sValue, $sSeparator, $sTextQualifier,$oHostObject, $bLocalize, $bConvertToPlainText);
+	}
+
 	/**
 	 * @param ormGeolocation $value
 	 * @param DBObject $oHostObject
