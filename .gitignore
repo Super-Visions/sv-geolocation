@@ -1,0 +1,4 @@
+
+# Ignore dictionary files
+dict.*.json
+for_use_*.json
