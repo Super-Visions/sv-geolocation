@@ -241,6 +241,77 @@ class ormGeolocation implements JsonSerializable
 	{
 		return $this->fLongitude;
 	}
+
+	/**
+	 * Calculate the X coordinate in the Rijksdriehoek (RD) system
+	 *
+	 * @since 1.6.0
+	 * @return float
+	 */
+	public function getRijksdriehoekX()
+	{
+		static $aPQR = [
+			[0,1,190094.945],
+			[1,1,-11832.228],
+			[2,1,-114.221],
+			[0,3,-32.391],
+			[1,0,-0.705],
+			[3,1,-2.34],
+			[1,3,-0.608],
+			[0,2,-0.008],
+			[2,3,0.148],
+		];
+
+		$fX = 155E3;
+		$oRijksdriehoekReference = static::getRijksdriehoekReference();
+		$oD = new static(
+			0.36 * ($this->getLatitude() - $oRijksdriehoekReference->getLatitude()),
+			0.36 * ($this->getLongitude() - $oRijksdriehoekReference->getLongitude())
+		);
+
+		foreach ($aPQR as list($iP, $iQ, $fR))
+		{
+			$fX += $fR * pow($oD->getLatitude(), $iP) * pow($oD->getLongitude(), $iQ);
+		}
+
+		return $fX;
+	}
+
+	/**
+	 * Calculate the Y coordinate in the Rijksdriehoek (RD) system
+	 *
+	 * @since 1.6.0
+	 * @return float
+	 */
+	public function getRijksdriehoekY()
+	{
+		static $aPQS = [
+			[1, 0, 309056.544],
+			[0, 2, 3638.893],
+			[2, 0, 73.077],
+			[1, 2, -157, 984],
+			[3, 0, 59.788],
+			[0, 1, 0.433],
+			[2, 2, -6.439],
+			[1, 1, -0.032],
+			[0, 4, 0.092],
+			[1, 4, -0.054]
+		];
+
+		$fY = 463E3;
+		$oRijksdriehoekReference = static::getRijksdriehoekReference();
+		$oD = new static(
+			0.36 * ($this->getLatitude() - $oRijksdriehoekReference->getLatitude()),
+			0.36 * ($this->getLongitude() - $oRijksdriehoekReference->getLongitude())
+		);
+
+		foreach ($aPQS as list($iP, $iQ, $fS))
+		{
+			$fY += $fS * pow($oD->getLatitude(), $iP) * pow($oD->getLongitude(), $iQ);
+		}
+
+		return $fY;
+	}
 	
 	public function __toString()
 	{
@@ -252,5 +323,14 @@ class ormGeolocation implements JsonSerializable
 			'lat' => $this->fLatitude,
 			'lng' => $this->fLongitude,
 		);
+	}
+
+	/**
+	 * @since 1.6.0
+	 * @return static
+	 */
+	public static function getRijksdriehoekReference()
+	{
+		return new static(52.1551744, 5.38720621);
 	}
 }
