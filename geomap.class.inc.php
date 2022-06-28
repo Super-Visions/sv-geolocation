@@ -1,8 +1,11 @@
 <?php
 /**
- * @copyright Copyright (C) 2019 Super-Visions
+ * @copyright Copyright (C) 2019-2022 Super-Visions
  * @license   http://opensource.org/licenses/AGPL-3.0
  */
+
+use Combodo\iTop\Application\UI\Base\Component\Html\Html;
+use Combodo\iTop\Application\UI\Base\Layout\UIContentBlockUIBlockFactory;
 
 class GeoMap extends Dashlet
 {
@@ -22,11 +25,7 @@ class GeoMap extends Dashlet
 	}
 	
 	/**
-	 * @param WebPage $oPage
-	 * @param bool $bEditMode
-	 * @param array $aExtraParams
-	 * @return mixed
-	 * @throws CoreException
+	 * @inheritDoc
 	 */
 	public function Render($oPage, $bEditMode = false, $aExtraParams = array())
 	{
@@ -43,6 +42,7 @@ class GeoMap extends Dashlet
 		{
 			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
 		}
+		$oBlock = null;
 		
 		// Prepare page
 		$oPage->add_dict_entry('UI:ClickToCreateNew');
@@ -63,15 +63,28 @@ STYLE
 		$sDisplaySearch = $this->aProperties['search'] ? 'block' : 'none';
 		$sSearch = Dict::S('UI:Button:Search');
 		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/images/world-map.jpg';
-		$oPage->add(<<<HTML
-<div id= class="dashlet-content">
+
+		if (version_compare(ITOP_DESIGN_LATEST_VERSION , 3.0) < 0)
+		{
+			$oPage->add(<<<HTML
+<div class="dashlet-content">
 	<div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
 	<div id="{$sId}" style="height: {$this->aProperties['height']}px; background: white url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
 </div>
 HTML
-		);
+			);
+		}
+		else
+		{
+			$oBlock = UIContentBlockUIBlockFactory::MakeStandard(null, ["dashlet-content"]);
+			$oBlock->AddSubBlock(new Html(<<<HTML
+	<div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
+	<div id="{$sId}" class="ibo-panel--body" style="height: {$this->aProperties['height']}px; background: #ffffff url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
+HTML
+			));
+		}
 		
-		if ($bEditMode) return;
+		if ($bEditMode) return $oBlock;
 		
 		$aDashletOptions = array(
 			'id' => $sId,
@@ -100,6 +113,8 @@ HTML
 		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
 		$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
 		$oPage->add_ready_script(sprintf('render_geomap(%s);', json_encode($aDashletOptions)));
+
+		return $oBlock;
 	}
 	
 	/**
