@@ -132,6 +132,41 @@ class AttributeGeolocation extends AttributeDBField
 	/**
 	 * @inheritDoc
 	 */
+	function EnumTemplateVerbs()
+	{
+		return array(
+			'' => 'Plain text representation in EPSG:4326 (lat,lon)',
+			'wgs_84' => 'Plain text representation in EPSG:4326 (lat,lon)',
+			'rd' => 'Plain text representation in EPSG:28992 (X,Y)',
+			'rijksdriehoek' => 'Plain text representation in EPSG:28992 (X,Y)',
+			'html' => 'HTML representation',
+		);
+	}
+
+	/**
+	 * @inheritDoc
+	 * @param ormGeolocation $value
+	 * @return string
+	 */
+	function GetForTemplate($value, $sVerb, $oHostObject = null, $bLocalize = true)
+	{
+		switch ($sVerb)
+		{
+			case 'rijksdriehoek':
+			case 'rd':
+				return sprintf('%f,%f', $value->getRijksdriehoekX(), $value->getRijksdriehoekY());
+
+			case 'wgs_84':
+				return (string) $value;
+
+			default:
+				return parent::GetForTemplate($value, $sVerb, $oHostObject, $bLocalize);
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function GetAsHTMLForHistory($sValue, $oHostObject = null, $bLocalize = true)
 	{
 		return (string) $sValue;
@@ -306,7 +341,7 @@ class ormGeolocation implements JsonSerializable
 	
 	public function __toString()
 	{
-		return sprintf('%f,%f',$this->fLatitude, $this->fLongitude);
+		return sprintf('%f,%f', $this->fLatitude, $this->fLongitude);
 	}
 	
 	/**

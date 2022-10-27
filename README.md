@@ -141,6 +141,17 @@ The geolocation attribute to use for placing the object on the map.
 </dashlet>
 ```
 
+Notifications
+-------------
+
+This module also adds some functions to choose the coordinate system when the attribute is used in notifications.
+
+### Representations
+
+* `$this->geo$` or `$this->wgs_84(geo)$`: Display the coordinates in [EPSG:4326](https://epsg.io/4326) (lat,lon).
+* `$this->rd(geo)$` or `$this->rijksdriehoek(geo)$`: Display the coordinates in [EPSG:28992](https://epsg.io/28992) (X,Y).
+* `$this->html(geo)$`: HTML representation just like in the detail or list view.
+
 Preview
 -------
 

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Improved support with [Location hierarchy](https://www.itophub.io/wiki/page?id=extensions:combodo-location-hierarchy) extension.
 - Create `ormGeolocation` from string.
+- Added functions for different notification placeholder representation.
 
 ### Changed
 - Improved code documentation and code cleanup.
