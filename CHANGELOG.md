@@ -9,13 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Improved support with [Location hierarchy](https://www.itophub.io/wiki/page?id=extensions:combodo-location-hierarchy) extension.
 
+### Changed
+- Improved code documentation and code cleanup.
+
 ## 1.7.0 - 2022-06-28
 ### Added
 - Improved support for iTop 3.0
 
 ## 1.6.0 - 2022-06-22
 ### Added
-- PHP methods to calculate RD (Rijksdriehoek) coordinates
+- PHP methods to calculate RD (Rijksdriehoek) coordinates.
 
 ## 1.5.0 - 2021-07-02
 ### Changed

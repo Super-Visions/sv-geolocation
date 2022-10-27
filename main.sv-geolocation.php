@@ -97,14 +97,7 @@ class AttributeGeolocation extends AttributeDBField
 	/**
 	 * Geolocation raw value always contains comma character
 	 *
-	 * @param string $sValue
-	 * @param string $sSeparator
-	 * @param string $sTextQualifier
-	 * @param \DBObject $oHostObject
-	 * @param bool $bLocalize
-	 * @param bool $bConvertToPlainText
-	 *
-	 * @return string
+	 * @inheritDoc
 	 */
 	public function GetAsCSV($sValue, $sSeparator = ',', $sTextQualifier = '"', $oHostObject = null, $bLocalize = true, $bConvertToPlainText = false) {
 		if (!empty($sValue) && strpos($sSeparator, ',') !== false) return $sTextQualifier.$sValue.$sTextQualifier;
@@ -112,10 +105,10 @@ class AttributeGeolocation extends AttributeDBField
 	}
 
 	/**
+	 * @inheritDoc
 	 * @param ormGeolocation $value
-	 * @param DBObject $oHostObject
-	 * @param bool $bLocalize
-	 * @return string
+	 * @throws ConfigException
+	 * @throws CoreException
 	 */
 	public function GetAsHTML($value, $oHostObject = null, $bLocalize = true)
 	{
@@ -144,6 +137,9 @@ class AttributeGeolocation extends AttributeDBField
 		return $sHTML;
 	}
 	
+	/**
+	 * @inheritDoc
+	 */
 	public function GetAsHTMLForHistory($sValue, $oHostObject = null, $bLocalize = true)
 	{
 		return (string) $sValue;
@@ -192,6 +188,8 @@ class AttributeGeolocation extends AttributeDBField
 	
 	/**
 	 * @return string Image URL to use as static map
+	 * @throws ConfigException
+	 * @throws CoreException
 	 */
 	public static function GetStaticMapUrl()
 	{
@@ -212,6 +210,7 @@ class AttributeGeolocation extends AttributeDBField
 				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
 				break;
 		}
+		return null;
 	}
 }
 
@@ -318,6 +317,10 @@ class ormGeolocation implements JsonSerializable
 		return sprintf('%f,%f',$this->fLatitude, $this->fLongitude);
 	}
 	
+	/**
+	 * @inheritDoc
+	 * @return array
+	 */
 	public function jsonSerialize() {
 		return array(
 			'lat' => $this->fLatitude,
