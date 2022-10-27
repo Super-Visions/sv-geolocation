@@ -83,15 +83,7 @@ class AttributeGeolocation extends AttributeDBField
 	{
 		if ($proposedValue instanceof ormGeolocation) return $proposedValue;
 		
-		if (preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($proposedValue), $aMatches))
-		{
-			return new ormGeolocation(floatval($aMatches[1]), floatval($aMatches[2]));
-		}
-		else
-		{
-			// TODO: Implement location to coordinates
-			return;
-		}
+		return ormGeolocation::fromString($proposedValue);
 	}
 
 	/**
@@ -335,5 +327,25 @@ class ormGeolocation implements JsonSerializable
 	public static function getRijksdriehoekReference()
 	{
 		return new static(52.1551744, 5.38720621);
+	}
+
+	/**
+	 * Create ormGeolocation object from string input
+	 *
+	 * @since 1.8.0
+	 * @param string $sInput
+	 * @return static
+	 */
+	public static function fromString(string $sInput)
+	{
+		if (preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($sInput), $aMatches))
+		{
+			return new static(floatval($aMatches[1]), floatval($aMatches[2]));
+		}
+		else
+		{
+			// TODO: Implement location to coordinates
+			return null;
+		}
 	}
 }
