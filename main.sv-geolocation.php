@@ -75,7 +75,7 @@ class AttributeGeolocation extends AttributeDBField
 	}
 	
 	/**
-	 * @param string|ormGeolocation $proposedValue
+	 * @param null|string|ormGeolocation $proposedValue
 	 * @param DBObject $oHostObj
 	 * @return ormGeolocation
 	 */
@@ -371,7 +371,7 @@ class ormGeolocation implements JsonSerializable
 	 * @param string $sInput
 	 * @return static
 	 */
-	public static function fromString(string $sInput)
+	public static function fromString(?string $sInput)
 	{
 		if (preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($sInput), $aMatches))
 		{
