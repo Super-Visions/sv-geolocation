@@ -49,11 +49,23 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
 		$bDisplay = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'display_coordinates');
+		list($sLang, $sRegion) = explode(' ', UserRights::GetUserLanguage(), 2);
 		
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
-				$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
+				switch (UserRights::GetUserLanguage())
+				{
+					case 'PT BR':
+					case 'ZH CN':
+						$sLang = strtolower($sLang).'-'.$sRegion;
+						break;
+					default:
+						$sLang = strtolower($sLang);
+						break;
+				}
+
+				$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
 				$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
 				
 				$oAttOptions = array('code' => $oAttDef->GetCode(), 'width' => $oAttDef->GetWidth(), 'height' => $oAttDef->GetHeight(), 'display' => $bDisplay);
