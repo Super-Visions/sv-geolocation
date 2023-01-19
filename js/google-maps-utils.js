@@ -52,7 +52,7 @@ function make_interactive_map(oAttOptions, oMapOptions) {
     });
 
     // recover after DOM rewrites
-    var oObserverField = oFieldInputZone.parents('.field_value').get(0);
+    var oObserverField = oFieldInputZone.parents('.field_value,.ibo-field--value').get(0);
     var oObserver = new MutationObserver(function (aMutations, oObserver) {
         var oAddedNode = aMutations.shift().addedNodes.item(0);
 

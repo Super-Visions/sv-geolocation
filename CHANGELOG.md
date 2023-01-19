@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Interactive Google Maps API warns about required callback parameter.
+- Interactive Google Maps blocked the edit page 'cancel' button.
 
 ## 1.8.1 - 2023-01-19
 ### Fixed
