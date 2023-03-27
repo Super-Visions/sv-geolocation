@@ -145,7 +145,7 @@ class AttributeGeolocation extends AttributeDBField
 
 	/**
 	 * @inheritDoc
-	 * @param ormGeolocation $value
+	 * @param ormGeolocation|null $value
 	 * @return string
 	 */
 	function GetForTemplate($value, $sVerb, $oHostObject = null, $bLocalize = true)
@@ -154,10 +154,12 @@ class AttributeGeolocation extends AttributeDBField
 		{
 			case 'rijksdriehoek':
 			case 'rd':
-				return sprintf('%f,%f', $value->getRijksdriehoekX(), $value->getRijksdriehoekY());
+				if ($value instanceof ormGeolocation) return sprintf('%f,%f', $value->getRijksdriehoekX(), $value->getRijksdriehoekY());
+				else return;
 
 			case 'wgs_84':
-				return (string) $value;
+				if ($value instanceof ormGeolocation) return sprintf('%f,%f', $value->getLatitude(), $value->getLongitude());
+				else return;
 
 			default:
 				return parent::GetForTemplate($value, $sVerb, $oHostObject, $bLocalize);
@@ -368,8 +370,8 @@ class ormGeolocation implements JsonSerializable
 	 * Create ormGeolocation object from string input
 	 *
 	 * @since 1.8.0
-	 * @param string $sInput
-	 * @return static
+	 * @param string|null $sInput
+	 * @return static|null
 	 */
 	public static function fromString(?string $sInput)
 	{
