@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - RAW coordinate can now also be changed in edit mode.
 
+### Fixed
+- php 8.1 compatibility deprecation warning
+
 ## 1.9.1 - 2023-03-27
 ### Fixed
 - Crash notification param when no geolocation is set.

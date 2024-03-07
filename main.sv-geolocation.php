@@ -350,7 +350,8 @@ class ormGeolocation implements JsonSerializable
 	 * @inheritDoc
 	 * @return array
 	 */
-	public function jsonSerialize() {
+	public function jsonSerialize(): array
+	{
 		return array(
 			'lat' => $this->fLatitude,
 			'lng' => $this->fLongitude,
