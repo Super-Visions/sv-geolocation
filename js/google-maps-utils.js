@@ -1,10 +1,9 @@
 function make_interactive_map(oAttOptions, oMapOptions) {
     var oFieldInputZone = $('.attribute-edit[data-attcode="' + oAttOptions.code + '"] .field_input_zone');
 
-    // hide or disable input field
-    var oFieldInput = oFieldInputZone.children();
-    if (oAttOptions.display) oFieldInput.prop('readonly', true);
-    else oFieldInput.prop('type','hidden');
+    // hide input field
+    var oFieldInput = oFieldInputZone.children('input');
+    if (!oAttOptions.display) oFieldInput.prop('type','hidden');
 
     // get location
     var aLocation = oFieldInput.val().split(',');
@@ -32,7 +31,7 @@ function make_interactive_map(oAttOptions, oMapOptions) {
     }
 
     // save marker location
-    oMarker.addListener('dragend', function () {
+    oMarker.addListener('dragend', function() {
         map.panTo(oMarker.position);
         map_save_location(oFieldInput, oMarker.position);
     });
@@ -44,11 +43,20 @@ function make_interactive_map(oAttOptions, oMapOptions) {
     });
 
     // set marker to location
-    oMap.addListener( 'click', function (event) {
+    oMap.addListener('click', function(event) {
         oMarker.setPosition(event.latLng);
         oMap.panTo(event.latLng);
         map_save_location(oFieldInput, event.latLng);
         oMarker.setMap(oMap);
+    });
+
+    // set coordinates
+    oFieldInput.on('change', function() {
+        aLocation = oFieldInput.val().split(',');
+        oLocation = (aLocation.length == 2) ? new google.maps.LatLng(aLocation[0], aLocation[1]) : null;
+
+        oMarker.setPosition(oLocation);
+        oMap.panTo(oLocation);
     });
 
     // recover after DOM rewrites

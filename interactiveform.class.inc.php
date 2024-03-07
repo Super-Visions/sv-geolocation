@@ -8,16 +8,7 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 {
 	
 	/**
-	 *    Invoked when an object is being displayed (wiew or edit)
-	 *
-	 * The method is called right after the main tab has been displayed.
-	 * You can add output to the page, either to change the display, or to add a form input
-	 *
-	 * @param DBObject $oObject The object being displayed
-	 * @param WebPage $oPage The output context
-	 * @param boolean $bEditMode True if the edition form is being displayed
-	 * @return void
-	 * @throws CoreException
+	 * @inheritDoc
 	 */
 	public function OnDisplayProperties($oObject, WebPage $oPage, $bEditMode = false)
 	{
@@ -27,7 +18,8 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 		foreach($aAttributes as $sAttCode)
 		{
 			$oAttDef = MetaModel::GetAttributeDef(get_class($oObject), $sAttCode);
-			if (is_a($oAttDef, AttributeGeolocation::class))
+
+			if (is_a($oAttDef, AttributeGeolocation::class) && !($oObject->GetAttributeFlags($sAttCode) & (OPT_ATT_READONLY | OPT_ATT_SLAVE)))
 			{
 				$this->DisplayInteractiveField($oAttDef, $oObject, $oPage);
 			}
