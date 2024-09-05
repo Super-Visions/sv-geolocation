@@ -348,7 +348,7 @@ class ormGeolocation implements JsonSerializable
 	
 	/**
 	 * @inheritDoc
-	 * @return array
+	 * @return array{lat: float, lng: float}
 	 */
 	public function jsonSerialize(): array
 	{
