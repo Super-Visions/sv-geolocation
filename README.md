@@ -36,7 +36,7 @@ To use maps from Google Maps, you will need to [acquire an API key](https://deve
 This value depends on which map provider (GM, OSM, ...) you want to use for thumbnails.
 It only needs to be set if you want to override the default behaviour.
 
-Depending on each map provider, there are several paremeters to give.
+Depending on each map provider, there are several parameters to give.
 The following parameters will be filled in:
 
 1. Latitude from the object.
