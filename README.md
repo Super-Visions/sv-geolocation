@@ -1,18 +1,15 @@
-Geolocation
-===========
+# Geolocation
 
 The module `sv-geolocation` is an [iTop](https://www.combodo.com/itop-193) extension to add a new attribute type called `AttributeGeolocation` to provide geographic coordinates.
 This new attribute type is added to the `Location` class as a new field.
 The module also provides a new dashboard dashlet `GeoMap` which adds an interactive map.
 
-Installation
-------------
+## Installation
 
 Place this in the `extensions` folder of your iTop instance and run iTop setup again.
 Be sure to enable the extension during setup.
 
-Configuration
--------------
+## Configuration
 
 After installation, it is possible to change some settings in order to let this module fully function.
 
@@ -47,6 +44,7 @@ The following parameters will be filled in:
 6. Zoom from configuration.
 
 Example values for `staticmapurl`:
+
 * [Google Maps](https://developers.google.com/maps/documentation/static-maps/intro):
 `https://maps.googleapis.com/maps/api/staticmap?markers=%f,%f&size=%dx%d&key=%s`.
 * [Open Street Map](https://wiki.openstreetmap.org/wiki/StaticMapLite):
@@ -69,7 +67,7 @@ This is the default longitude when a new dashlet is displayed.
 
 This is the default zoom for dashlet maps and for static maps.
 Note that by default, the static map from Google Maps have a dynamic zoom level.
-If you want a fixed zoom level, you will need to reflect this in the parameter `staticmapurl`. 
+If you want a fixed zoom level, you will need to reflect this in the parameter `staticmapurl`.
 
 ### display_coordinates
 
@@ -77,8 +75,7 @@ This value specifies if the coordinates of the geolocation also should be shown 
 This is enabled by default.
 Note that when you don't have thumbnails, the coordinates will always be displayed.
 
-XML Data Model Reference
-------------------------
+## XML Data Model Reference
 
 Field type is `AttributeGeolocation`.
 
@@ -109,8 +106,7 @@ Defaults to 150.
 </field>
 ```
 
-XML Dashboard Reference
------------------------
+## XML Dashboard Reference
 
 Dashlet type is `GeoMap`.
 
@@ -141,8 +137,7 @@ The geolocation attribute to use for placing the object on the map.
 </dashlet>
 ```
 
-Notifications
--------------
+## Notifications
 
 This module also adds some functions to choose the coordinate system when the attribute is used in notifications.
 
@@ -152,20 +147,21 @@ This module also adds some functions to choose the coordinate system when the at
 * `$this->rd(geo)$` or `$this->rijksdriehoek(geo)$`: Display the coordinates in [EPSG:28992](https://epsg.io/28992) (X,Y).
 * `$this->html(geo)$`: HTML representation just like in the detail or list view.
 
-Preview
--------
+## Preview
 
 ### Location detail view
+
 ![Location detail](images/preview-location-detail.png "Properties tab of location Paris from example data")
 
 ### Location list view
+
 ![Location list](images/preview-location-list.png "List view of locations from example data")
 
 ### Dashboard Dashlet
+
 ![GeoMap Dashlet](images/preview-dashlet.png "Dashlet with some example locations")
 
-Contribute
-----------
+## Contribute
 
 ### Translation
 
