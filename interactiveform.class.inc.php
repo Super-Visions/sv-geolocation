@@ -41,32 +41,35 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
 		$bDisplay = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'display_coordinates');
+		$sInputType = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'input_type');
 		list($sLang, $sRegion) = explode(' ', UserRights::GetUserLanguage(), 2);
-		
-		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
-		{
-			case 'GoogleMaps':
-				switch (UserRights::GetUserLanguage())
-				{
-					case 'PT BR':
-					case 'ZH CN':
-						$sLang = strtolower($sLang).'-'.$sRegion;
-						break;
-					default:
-						$sLang = strtolower($sLang);
-						break;
-				}
 
-				$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
-				$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
-				
-				$oAttOptions = array('code' => $oAttDef->GetCode(), 'width' => $oAttDef->GetWidth(), 'height' => $oAttDef->GetHeight(), 'display' => $bDisplay);
-				$oMapOptions = array('center' => new ormGeolocation($iDefaultLat, $iDefaultLng), 'zoom' => $iZoom);
-				
-				$oPage->add_ready_script(sprintf('make_interactive_map(%s, %s);', json_encode($oAttOptions), json_encode($oMapOptions)));
-				break;
-			default:
-				break;
+		if ($sInputType == 'provider') {
+			switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
+			{
+				case 'GoogleMaps':
+					switch (UserRights::GetUserLanguage())
+					{
+						case 'PT BR':
+						case 'ZH CN':
+							$sLang = strtolower($sLang).'-'.$sRegion;
+							break;
+						default:
+							$sLang = strtolower($sLang);
+							break;
+					}
+
+					$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
+					$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
+
+					$oAttOptions = array('code' => $oAttDef->GetCode(), 'width' => $oAttDef->GetWidth(), 'height' => $oAttDef->GetHeight(), 'display' => $bDisplay);
+					$oMapOptions = array('center' => new ormGeolocation($iDefaultLat, $iDefaultLng), 'zoom' => $iZoom);
+
+					$oPage->add_ready_script(sprintf('make_interactive_map(%s, %s);', json_encode($oAttOptions), json_encode($oMapOptions)));
+					break;
+				default:
+					break;
+			}
 		}
 	}
 	
