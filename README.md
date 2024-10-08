@@ -22,6 +22,15 @@ Currently, only Google Maps is supported for interactive maps.
 * `OpenStreetMaps`
 * `MapQuest`
 
+### input_type
+
+Specify the type of input you want to use.
+Provider GoogleMaps supports interactive input, but does not allow searching.
+If you change this value to any other option, a textbox will be used for GoogleMaps instead. This is useful when you prefer to use copy and paste.
+
+* `provider`
+* anything else ...
+
 ### api_key
 
 Depending on the provider you are using, you might need to enter the API key.

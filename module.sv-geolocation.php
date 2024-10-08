@@ -46,6 +46,7 @@ SetupWebPage::AddModule(
 		//
 		'settings' => array(
 			'provider' => 'GoogleMaps',
+			'input_type' => 'provider',
 			'api_key' => null,
 			'default_latitude' => 45.157389,
 			'default_longitude' => 5.748830,
