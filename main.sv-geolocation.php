@@ -14,8 +14,8 @@ class AttributeGeolocation extends AttributeDBField
 	public function GetSQLColumns($bFullSpec = false)
 	{
 		$aColumns = array();
-		$aColumns[$this->GetCode() . '_lat'] = 'DECIMAL(10,8)';
-		$aColumns[$this->GetCode() . '_lng'] = 'DECIMAL(11,8)';
+		$aColumns[$this->GetCode().'_lat'] = 'DECIMAL(10,8)';
+		$aColumns[$this->GetCode().'_lng'] = 'DECIMAL(11,8)';
 		return $aColumns;
 	}
 	
