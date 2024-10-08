@@ -14,8 +14,8 @@ class AttributeGeolocation extends AttributeDBField
 	public function GetSQLColumns($bFullSpec = false)
 	{
 		$aColumns = array();
-		$aColumns[$this->GetCode().'_lat'] = 'DECIMAL(8,6)';
-		$aColumns[$this->GetCode().'_lng'] = 'DECIMAL(9,6)';
+		$aColumns[$this->GetCode().'_lat'] = 'DECIMAL(10,8)';
+		$aColumns[$this->GetCode().'_lng'] = 'DECIMAL(11,8)';
 		return $aColumns;
 	}
 	
@@ -229,14 +229,14 @@ class AttributeGeolocation extends AttributeDBField
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
-				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$f,%2$f&size=%3$dx%4$d&key=%5$s';
+				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$.8f,%2$.8f&size=%3$dx%4$d&key=%5$s';
 				break;
 				
 			case 'OpenStreetMap':
-				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=%6$d';
+				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$.8f,%2$.8f&markers=%1$.8f,%2$.8f,red-pushpin&size=%3$dx%4$d&zoom=%6$d';
 				
 			case 'MapQuest':
-				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
+				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$.8f,%2$.8f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
 				break;
 		}
 		return null;
@@ -343,7 +343,7 @@ class ormGeolocation implements JsonSerializable
 	
 	public function __toString()
 	{
-		return sprintf('%f,%f', $this->fLatitude, $this->fLongitude);
+		return sprintf('%.8f,%.8f', $this->fLatitude, $this->fLongitude);
 	}
 	
 	/**
