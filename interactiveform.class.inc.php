@@ -42,7 +42,9 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
 		$bDisplay = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'display_coordinates');
 		list($sLang, $sRegion) = explode(' ', UserRights::GetUserLanguage(), 2);
-		
+
+		$oAttOptions = ['code' => $oAttDef->GetCode(), 'width' => $oAttDef->GetWidth(), 'height' => $oAttDef->GetHeight(), 'display' => $bDisplay];
+
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
@@ -57,17 +59,23 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 						break;
 				}
 
-				$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
-				$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
-				
-				$oAttOptions = array('code' => $oAttDef->GetCode(), 'width' => $oAttDef->GetWidth(), 'height' => $oAttDef->GetHeight(), 'display' => $bDisplay);
+				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
+				$oPage->LinkScriptFromModule('sv-geolocation/js/google-maps-utils.js');
+
 				$oMapOptions = array('center' => new ormGeolocation($iDefaultLat, $iDefaultLng), 'zoom' => $iZoom);
-				
-				$oPage->add_ready_script(sprintf('make_interactive_map(%s, %s);', json_encode($oAttOptions), json_encode($oMapOptions)));
+				break;
+			case 'MapLibre':
+			case 'MapTiler':
+				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
+				$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.css');
+				$oPage->LinkScriptFromModule('sv-geolocation/js/maplibre-utils.js');
+
+				$oMapOptions = ['center' => [$iDefaultLng, $iDefaultLat], 'zoom' => $iZoom, 'key' => $sApiKey];
 				break;
 			default:
-				break;
+				return;
 		}
+		$oPage->add_ready_script(sprintf('make_interactive_map(%s, %s);', json_encode($oAttOptions), json_encode($oMapOptions)));
 	}
 	
 	/**

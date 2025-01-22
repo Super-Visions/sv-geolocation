@@ -15,7 +15,7 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			'(combodo-location-hierarchy/1.0.0 & itop-structure/3.0.0)||itop-structure/3.0.0',
+			'(combodo-location-hierarchy/1.0.0 & itop-structure/3.2.0)||itop-structure/3.2.0',
 		),
 		'mandatory' => false,
 		'visible' => true,
@@ -45,7 +45,7 @@ SetupWebPage::AddModule(
 		// Default settings
 		//
 		'settings' => array(
-			'provider' => 'MapTiler',
+			'provider' => 'MapLibre',
 			'api_key' => null,
 			'default_latitude' => 45.157389,
 			'default_longitude' => 5.748830,

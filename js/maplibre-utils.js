@@ -1,3 +1,97 @@
+function make_interactive_map(oAttOptions, oMapOptions) {
+    const oFieldInputZone = $('.attribute-edit[data-attcode="' + oAttOptions.code + '"] .field_input_zone');
+
+    // hide input field
+    const oFieldInput = oFieldInputZone.children('input');
+    if (!oAttOptions.display) oFieldInput.prop('type','hidden');
+
+    // get location
+    const aLocation = oFieldInput.val().split(',').reverse();
+
+    // create map
+    const oMapDiv = $(document.createElement('div'));
+    oMapDiv.width(oAttOptions.width);
+    oMapDiv.height(oAttOptions.height);
+    oMapDiv.css('background', 'white url('+ GetAbsoluteUrlModulesRoot() +'sv-geolocation/images/world-map.jpg) center/contain no-repeat');
+    oFieldInputZone.prepend(oMapDiv);
+    const oMap = new maplibregl.Map({
+        container: oMapDiv[0],
+        style: 'https://api.maptiler.com/maps/bright/style.json?key=' + oMapOptions.key,
+        center: (aLocation.length === 2) ? aLocation : oMapOptions.center,
+        zoom: oMapOptions.zoom,
+        attributionControl: false,
+        dragRotate: false,
+    });
+
+    // Add fullscreen control to the map
+    oMap.addControl(new maplibregl.FullscreenControl());
+
+    // create marker
+    const oMarker = new maplibregl.Marker({draggable: true});
+
+    // pan map and place marker
+    if (aLocation.length === 2) {
+        oMarker.setLngLat(aLocation);
+        oMarker.addTo(oMap);
+    }
+
+    // save marker location
+    oMarker.on('dragend', () => {
+        oMap.easeTo({center: oMarker.getLngLat()});
+        map_save_location(oFieldInput, oMarker.getLngLat());
+    });
+
+    // remove marker
+    $(oMarker.getElement()).on('click', (e) => {
+        e.stopPropagation();
+        oMarker.remove();
+        map_save_location(oFieldInput);
+    });
+
+    // set marker to location
+    oMap.on('click', (e) => {
+        oMarker.setLngLat(e.lngLat)
+        oMap.easeTo({center: e.lngLat});
+        map_save_location(oFieldInput, e.lngLat);
+        oMarker.addTo(oMap);
+    });
+
+    // set coordinates
+    oFieldInput.on('change', () => {
+        const aLocation = oFieldInput.val().split(',').reverse();
+
+        if (aLocation.length === 2) {
+            const oLocation = maplibregl.LngLat.convert(aLocation);
+
+            oMarker.setLngLat(oLocation);
+            oMap.easeTo({center: oLocation})
+        } else {
+            oMarker.remove();
+        }
+    });
+
+    // recover after DOM rewrites
+    const oObserverField = oFieldInputZone.parents('.field_value,.ibo-field--value').get(0);
+    const oObserver = new MutationObserver(function (aMutations, oObserver) {
+        const oAddedNode = aMutations.shift().addedNodes.item(0);
+
+        if (oAddedNode && oAddedNode.id === oObserverField.firstElementChild.id) {
+            oObserver.disconnect();
+
+            oMapOptions.center = oMap.getCenter();
+            oMapOptions.zoom = oMap.getZoom();
+
+            make_interactive_map(oAttOptions, oMapOptions);
+        }
+    });
+    oObserver.observe(oObserverField, {childList: true, subtree: true})
+}
+
+function map_save_location(oField, oLngLat) {
+    if (oLngLat) oField.val(oLngLat.lat + ',' + oLngLat.lng);
+    else oField.val('');
+}
+
 function render_geomap(oDashlet, aLocations) {
     const oMap = new maplibregl.Map({
         container: oDashlet.id,
