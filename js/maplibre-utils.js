@@ -226,20 +226,10 @@ function render_geomap(oDashlet, aLocations) {
     // add create object functionality
     if (oDashlet.createUrl) {
         const oMarker = new maplibregl.Marker({draggable: true});
-
-        const oPopup = $(document.createElement('a'));
-        let oSpan = $(document.createElement('span'));
-        oSpan.addClass('fas fa-plus');
-        oPopup.append(oSpan);
-        oSpan = $(document.createElement('span'));
-        oSpan.text(' ' + Dict.Format('UI:ClickToCreateNew', oDashlet.classLabel));
-        oPopup.append(oSpan);
-
-        oMarker.setPopup(new maplibregl.Popup().setDOMContent(oPopup[0]));
-
         const oMarkerElement = $(oMarker.getElement());
         oMarkerElement.attr('title', Dict.Format('UI:ClickToCreateNew', oDashlet.classLabel));
         oMarkerElement.css('cursor', 'copy');
+
         oMarkerElement.on('click', () => {
             window.location = AddAppContext(oDashlet.createUrl + oMarker.getLngLat().toArray().reverse());
         })
