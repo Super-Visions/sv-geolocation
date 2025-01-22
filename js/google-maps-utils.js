@@ -123,7 +123,7 @@ function render_geomap(oDashlet, aLocations) {
     });
 
     // set marker to location
-    oMap.addListener('click', function (event) {
+    oMap.addListener('rightclick', function (event) {
         oMarker.setPosition(event.latLng);
         oMap.panTo(event.latLng);
         oMarker.setMap(oMap);

@@ -223,24 +223,30 @@ function render_geomap(oDashlet, aLocations) {
         });
     });
 
-    const oMarker = new maplibregl.Marker({draggable: true});
+    // add create object functionality
+    if (oDashlet.createUrl) {
+        const oMarker = new maplibregl.Marker({draggable: true});
 
-    oMap.on('contextmenu', (e) => {
-        oMarker.setLngLat(e.lngLat);
-        oMarker.addTo(oMap);
+        const oPopup = $(document.createElement('a'));
+        let oSpan = $(document.createElement('span'));
+        oSpan.addClass('fas fa-plus');
+        oPopup.append(oSpan);
+        oSpan = $(document.createElement('span'));
+        oSpan.text(' ' + Dict.Format('UI:ClickToCreateNew', oDashlet.classLabel));
+        oPopup.append(oSpan);
 
-        const oCreate = new DOMParser().parseFromString(oDashlet.create, "text/xml").firstChild;
-        const sURL = oCreate.getAttribute('href');
-        oCreate.setAttribute('href', sURL + e.lngLat.toArray().reverse());
+        oMarker.setPopup(new maplibregl.Popup().setDOMContent(oPopup[0]));
 
-        oMarker.setPopup(new maplibregl.Popup().setHTML(oCreate.outerHTML));
-    });
+        const oMarkerElement = $(oMarker.getElement());
+        oMarkerElement.attr('title', Dict.Format('UI:ClickToCreateNew', oDashlet.classLabel));
+        oMarkerElement.css('cursor', 'copy');
+        oMarkerElement.on('click', () => {
+            window.location = AddAppContext(oDashlet.createUrl + oMarker.getLngLat().toArray().reverse());
+        })
 
-    oMarker.on('dragend', () => {
-        const oCreate = new DOMParser().parseFromString(oDashlet.create, "text/xml").firstChild;
-        const sURL = oCreate.getAttribute('href');
-        oCreate.setAttribute('href', sURL + oMarker.getLngLat().toArray().reverse());
-
-        oMarker.setPopup(new maplibregl.Popup().setHTML(oCreate.outerHTML));
-    });
+        oMap.on('contextmenu', (e) => {
+            oMarker.setLngLat(e.lngLat);
+            oMarker.addTo(oMap);
+        });
+    }
 }

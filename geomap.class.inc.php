@@ -67,22 +67,16 @@ HTML
 
 		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
 
-		$sCreateHTML = null;
+		$sCreateUrl = null;
 		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
 		{
-			$sCreateLabel = Dict::Format('UI:ClickToCreateNew', MetaModel::GetName($oFilter->GetClass()));
-			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&amp;class=%s&amp;default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
-			$sCreateHTML = <<<HTML
-<a href="{$sCreateUrl}">
-	<span class="fas fa-plus"/>
-	<span>{$sCreateLabel}</span>
-</a>
-HTML;
+			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
 		}
 
 		$aDashletOptions = array(
 			'id' => $sId,
-			'create' => $sCreateHTML,
+			'classLabel' => MetaModel::GetName($oFilter->GetClass()),
+			'createUrl' => $sCreateUrl,
 			'map' => [
 				'center' => [$iDefaultLng, $iDefaultLat],
 				'zoom' => $iZoom,
