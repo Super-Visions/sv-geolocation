@@ -77,10 +77,7 @@ HTML
 			'id' => $sId,
 			'classLabel' => MetaModel::GetName($oFilter->GetClass()),
 			'createUrl' => $sCreateUrl,
-			'map' => [
-				'center' => ['lat' => $iDefaultLat, 'lng' => $iDefaultLng],
-				'zoom' => $iZoom,
-			],
+			'map' => array('center' => array('lat' => $iDefaultLat, 'lng' => $iDefaultLng), 'zoom' => $iZoom,),
 			'apiKey' => $sApiKey,
 			'locations' => array(),
 		);
