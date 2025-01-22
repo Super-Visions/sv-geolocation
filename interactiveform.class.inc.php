@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (C) 2019 Super-Visions
+ * @copyright 2019-2025 Super-Visions
  * @license   http://opensource.org/licenses/AGPL-3.0
  */
 
