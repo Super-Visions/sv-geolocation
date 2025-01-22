@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'sv-geolocation/1.9.2',
+	'sv-geolocation/2.0.0-beta',
 	array(
 		// Identification
 		//
@@ -15,7 +15,7 @@ SetupWebPage::AddModule(
 		// Setup
 		//
 		'dependencies' => array(
-			'(itop-config-mgmt/2.5.0 & itop-config-mgmt/<3.0.0)||itop-structure/3.0.0||combodo-location-hierarchy/1.0.0',
+			'(combodo-location-hierarchy/1.0.0 & itop-structure/3.0.0)||itop-structure/3.0.0',
 		),
 		'mandatory' => false,
 		'visible' => true,
@@ -45,7 +45,7 @@ SetupWebPage::AddModule(
 		// Default settings
 		//
 		'settings' => array(
-			'provider' => 'GoogleMaps',
+			'provider' => 'MapTiler',
 			'api_key' => null,
 			'default_latitude' => 45.157389,
 			'default_longitude' => 5.748830,

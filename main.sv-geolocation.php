@@ -146,7 +146,7 @@ class AttributeGeolocation extends AttributeDBField
 	/**
 	 * @inheritDoc
 	 * @param ormGeolocation|null $value
-	 * @return string
+	 * @return string|void
 	 */
 	function GetForTemplate($value, $sVerb, $oHostObject = null, $bLocalize = true)
 	{
@@ -237,6 +237,10 @@ class AttributeGeolocation extends AttributeDBField
 				
 			case 'MapQuest':
 				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
+				break;
+
+			case 'MapTiler':
+				if ($sApiKey) return 'https://api.maptiler.com/maps/bright-v2/static/auto/%3$dx%4$d@2x.png?markers=%1$f,%2$f&key=%5$s';
 				break;
 		}
 		return null;

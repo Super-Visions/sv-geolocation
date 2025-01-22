@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (C) 2019-2022 Super-Visions
+ * @copyright Copyright (C) 2019-2025 Super-Visions
  * @license   http://opensource.org/licenses/AGPL-3.0
  */
 
@@ -35,15 +35,7 @@ class GeoMap extends Dashlet
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
 		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
-		
-		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
-		$sCreateUrl = null;
-		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
-		{
-			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
-		}
-		$oBlock = null;
-		
+
 		// Prepare page
 		$oPage->add_dict_entry('UI:ClickToCreateNew');
 		$oPage->add_style(<<<STYLE
@@ -59,38 +51,43 @@ class GeoMap extends Dashlet
 }
 STYLE
 		);
-		
+
 		$sDisplaySearch = $this->aProperties['search'] ? 'block' : 'none';
 		$sSearch = Dict::S('UI:Button:Search');
 		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/images/world-map.jpg';
 
-		if (version_compare(ITOP_DESIGN_LATEST_VERSION , 3.0) < 0)
-		{
-			$oPage->add(<<<HTML
-<div class="dashlet-content">
-	<div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
-	<div id="{$sId}" style="height: {$this->aProperties['height']}px; background: white url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
-</div>
+		$oBlock = UIContentBlockUIBlockFactory::MakeStandard(null, ["dashlet-content"]);
+		$oBlock->AddSubBlock(new Html(<<<HTML
+<div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
+<div id="{$sId}" class="ibo-panel--body" style="height: {$this->aProperties['height']}px; background: #ffffff url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
 HTML
-			);
-		}
-		else
-		{
-			$oBlock = UIContentBlockUIBlockFactory::MakeStandard(null, ["dashlet-content"]);
-			$oBlock->AddSubBlock(new Html(<<<HTML
-	<div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
-	<div id="{$sId}" class="ibo-panel--body" style="height: {$this->aProperties['height']}px; background: #ffffff url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
-HTML
-			));
-		}
-		
+		));
+
 		if ($bEditMode) return $oBlock;
-		
+
+		$oFilter = DBObjectSearch::FromOQL($this->aProperties['query']);
+
+		$sCreateHTML = null;
+		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
+		{
+			$sCreateLabel = Dict::Format('UI:ClickToCreateNew', MetaModel::GetName($oFilter->GetClass()));
+			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&amp;class=%s&amp;default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
+			$sCreateHTML = <<<HTML
+<a href="{$sCreateUrl}">
+	<span class="fas fa-plus"/>
+	<span>{$sCreateLabel}</span>
+</a>
+HTML;
+		}
+
 		$aDashletOptions = array(
 			'id' => $sId,
-			'classLabel' => MetaModel::GetName($oFilter->GetClass()),
-			'createUrl' => $sCreateUrl,
-			'map' => array('center' => array('lat' => $iDefaultLat, 'lng' => $iDefaultLng), 'zoom' => $iZoom),
+			'create' => $sCreateHTML,
+			'map' => [
+				'center' => [$iDefaultLng, $iDefaultLat],
+				'zoom' => $iZoom,
+				'key' => $sApiKey
+			],
 			'locations' => array(),
 		);
 		
@@ -110,8 +107,10 @@ HTML
 		}
 		
 		// Make interactive
-		$oPage->add_linked_script(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
-		$oPage->add_linked_script(utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/js/google-maps-utils.js');
+		$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
+		$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.css');
+		$oPage->LinkScriptFromModule('sv-geolocation/js/maplibre-utils.js');
+
 		$oPage->add_ready_script(sprintf('render_geomap(%s);', json_encode($aDashletOptions)));
 
 		return $oBlock;
