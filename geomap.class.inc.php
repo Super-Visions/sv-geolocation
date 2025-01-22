@@ -78,10 +78,10 @@ HTML
 			'classLabel' => MetaModel::GetName($oFilter->GetClass()),
 			'createUrl' => $sCreateUrl,
 			'map' => [
-				'center' => [$iDefaultLng, $iDefaultLat],
+				'center' => ['lat' => $iDefaultLat, 'lng' => $iDefaultLng],
 				'zoom' => $iZoom,
-				'key' => $sApiKey
 			],
+			'apiKey' => $sApiKey,
 			'locations' => array(),
 		);
 		
@@ -99,12 +99,23 @@ HTML
 				);
 			}
 		}
-		
-		// Make interactive
-		$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
-		$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.css');
-		$oPage->LinkScriptFromModule('sv-geolocation/js/maplibre-utils.js');
 
+		// Make interactive
+		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
+		{
+			case 'GoogleMaps':
+				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
+				$oPage->LinkScriptFromModule('sv-geolocation/js/google-maps-utils.js');
+				break;
+			case 'MapLibre':
+			case 'MapTiler':
+				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
+				$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.css');
+				$oPage->LinkScriptFromModule('sv-geolocation/js/maplibre-utils.js');
+				break;
+			default:
+				return $oBlock;
+		}
 		$oPage->add_ready_script(sprintf('render_geomap(%s);', json_encode($aDashletOptions)));
 
 		return $oBlock;

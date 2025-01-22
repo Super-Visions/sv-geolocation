@@ -95,8 +95,8 @@ function map_save_location(oField, oLngLat) {
 function render_geomap(oDashlet, aLocations) {
     const oMap = new maplibregl.Map({
         container: oDashlet.id,
-        style: 'https://api.maptiler.com/maps/bright/style.json?key=' + oDashlet.map.key,
-        center: oDashlet.map.center,
+        style: 'https://api.maptiler.com/maps/bright/style.json?key=' + oDashlet.apiKey,
+        center: maplibregl.LngLat.convert(oDashlet.map.center),
         zoom: oDashlet.map.zoom,
     });
 
