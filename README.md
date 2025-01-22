@@ -15,12 +15,10 @@ After installation, it is possible to change some settings in order to let this 
 
 ### provider
 
-Specify the provider you want to use for maps.
-Currently, only Google Maps is supported for interactive maps.
+Specify the provider you want to use for interactive maps.
 
 * `GoogleMaps`
-* `OpenStreetMaps`
-* `MapQuest`
+* `MapLibre`
 
 ### api_key
 
