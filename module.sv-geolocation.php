@@ -51,6 +51,7 @@ SetupWebPage::AddModule(
 			'default_longitude' => 5.748830,
 			'default_zoom' => 17,
 			'staticmapurl' => null,
+			'style' => null,
 			'display_coordinates' => true,
 		),
 	)

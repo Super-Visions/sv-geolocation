@@ -67,11 +67,12 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 
 			case 'MapLibre':
 			case 'MapTiler':
+			case 'OpenStreetMap':
 				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
 				$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.css');
 				$oPage->LinkScriptFromModule('sv-geolocation/js/maplibre-utils.js');
 
-				$oMapOptions = ['center' => [$iDefaultLng, $iDefaultLat], 'zoom' => $iZoom, 'key' => $sApiKey];
+				$oMapOptions = ['center' => [$iDefaultLng, $iDefaultLat], 'zoom' => $iZoom, 'style' => AttributeGeolocation::GetStyle()];
 				break;
 			default:
 				return;

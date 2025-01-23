@@ -255,6 +255,46 @@ class AttributeGeolocation extends AttributeDBField
 
 		return null;
 	}
+
+	/**
+	 * Get the configured style, or a default one based on th configured provider, if possible.
+	 * @return array|string|null
+	 * @throws ConfigException
+	 * @throws CoreException
+	 * @see https://maplibre.org/maplibre-gl-js/docs/style-spec/
+	 */
+	public static function GetStyle(): array|string|null
+	{
+		$style = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'style');
+		if ($style) return $style;
+
+		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
+		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
+		{
+			case 'OpenStreetMap':
+				return [
+					'version' => 8,
+					'glyphs'  => 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+					'sources' => ['osm' => [
+						'type'        => 'raster',
+						'tiles'       => ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+						'tileSize'    => 256,
+						'attribution' => '<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+					]],
+					'layers'  => [[
+						'id'     => 'osm',
+						'type'   => 'raster',
+						'source' => 'osm',
+					]]
+				];
+
+			case 'MapTiler':
+				if ($sApiKey) return sprintf('https://api.maptiler.com/maps/bright-v2/style.json?key=%s', $sApiKey);
+				break;
+		}
+
+		return null;
+	}
 }
 
 class ormGeolocation implements JsonSerializable

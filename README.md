@@ -19,6 +19,8 @@ Specify the provider you want to use for interactive maps.
 
 * `GoogleMaps`
 * `MapLibre`
+  * `MapTiler`
+  * `OpenStreetMap`
 
 ### api_key
 
@@ -52,6 +54,17 @@ Example values for `staticmapurl`:
 
 Note that you can also use [QR Code Generator](http://goqr.me/api/doc/create-qr-code/) as thumbnail generator.
 The resulting value for `staticmapurl` then looks like: `https://api.qrserver.com/v1/create-qr-code/?data=geo:%f,%f&size=%dx%d&bgcolor=eee`
+
+### style
+
+When using a MapLibre provider, you can use a custom [style specification](https://maplibre.org/maplibre-gl-js/docs/style-spec/).
+The value is either a URL to the style JSON file or a representation of the style.
+
+The module has default values for the following providers:
+
+* [MapTiler](https://docs.maptiler.com/cloud/api/maps/#style-json-of-the-map):
+`https://api.maptiler.com/maps/bright-v2/style.json?key=YOUR_MAPTILER_API_KEY`
+* OpenStreetMap
 
 ### default_latitude
 

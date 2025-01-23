@@ -117,6 +117,9 @@ HTML
 				break;
 			case 'MapLibre':
 			case 'MapTiler':
+			case 'OpenStreetMap':
+				$aDashletOptions['style'] = AttributeGeolocation::GetStyle();
+
 				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
 				$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.css');
 				$oPage->LinkScriptFromModule('sv-geolocation/js/maplibre-utils.js');

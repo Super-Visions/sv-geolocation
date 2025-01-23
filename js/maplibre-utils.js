@@ -16,7 +16,7 @@ function make_interactive_map(oAttOptions, oMapOptions) {
     oFieldInputZone.prepend(oMapDiv);
     const oMap = new maplibregl.Map({
         container: oMapDiv[0],
-        style: 'https://api.maptiler.com/maps/bright/style.json?key=' + oMapOptions.key,
+        style: oMapOptions.style,
         center: (aLocation.length === 2) ? aLocation : oMapOptions.center,
         zoom: oMapOptions.zoom,
         attributionControl: false,
@@ -95,7 +95,7 @@ function map_save_location(oField, oLngLat) {
 function render_geomap(oDashlet, aLocations) {
     const oMap = new maplibregl.Map({
         container: oDashlet.id,
-        style: 'https://api.maptiler.com/maps/bright/style.json?key=' + oDashlet.apiKey,
+        style: oDashlet.style,
         center: maplibregl.LngLat.convert(oDashlet.map.center),
         zoom: oDashlet.map.zoom,
     });
