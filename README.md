@@ -116,7 +116,7 @@ Display rank.
 Height of the interactive map.
 Defaults to 600.
 * search _(optional)_
-Whether or not to activate address search.
+Whether to activate address search.
 Defaults to "false".
 * query _(mandatory)_
 The OQL query to select the objects to be placed on the map.

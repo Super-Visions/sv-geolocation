@@ -9,83 +9,87 @@
  */
 class AttributeGeolocation extends AttributeDBField
 {
-	public function GetEditClass()
+	public function GetEditClass(): string
 	{
 		return 'GeoLocation';
 	}
-	
-	public function GetSQLColumns($bFullSpec = false)
+
+	/**
+	 * @inheritDoc
+	 */
+	public function GetSQLColumns($bFullSpec = false): array
 	{
 		$aColumns = array();
-		$aColumns[$this->GetCode().'_lat'] = 'DECIMAL(8,6)';
-		$aColumns[$this->GetCode().'_lng'] = 'DECIMAL(9,6)';
+		$aColumns[$this->GetCode() . '_lat'] = 'DECIMAL(8,6)';
+		$aColumns[$this->GetCode() . '_lng'] = 'DECIMAL(9,6)';
 		return $aColumns;
 	}
-	
-	public function GetSQLExpressions($sPrefix = '')
+
+	/**
+	 * @inheritDoc
+	 */
+	public function GetSQLExpressions($sPrefix = ''): array
 	{
 		if ($sPrefix == '')
 		{
 			$sPrefix = $this->GetCode();
 		}
 		$aColumns = array();
-		$aColumns[''] = $sPrefix.'_lat';
-		$aColumns['latitude'] = $sPrefix.'_lat';
-		$aColumns['longitude'] = $sPrefix.'_lng';
+		$aColumns[''] = $sPrefix . '_lat';
+		$aColumns['latitude'] = $sPrefix . '_lat';
+		$aColumns['longitude'] = $sPrefix . '_lng';
 		return $aColumns;
 	}
-	
+
 	/**
 	 * @param $aCols
 	 * @param string $sPrefix
 	 * @return ormGeolocation
 	 * @throws MissingColumnException
 	 */
-	public function FromSQLToValue($aCols, $sPrefix = '')
+	public function FromSQLToValue($aCols, $sPrefix = ''): ormGeolocation
 	{
-		if (!array_key_exists($sPrefix.'latitude', $aCols))
+		if (!array_key_exists($sPrefix . 'latitude', $aCols))
 		{
 			$sAvailable = implode(', ', array_keys($aCols));
-			throw new MissingColumnException("Missing column '".$sPrefix."latitude' from {$sAvailable}");
+			throw new MissingColumnException("Missing column '" . $sPrefix . "latitude' from {$sAvailable}");
 		}
-		
-		if (!array_key_exists($sPrefix.'longitude', $aCols))
+
+		if (!array_key_exists($sPrefix . 'longitude', $aCols))
 		{
 			$sAvailable = implode(', ', array_keys($aCols));
-			throw new MissingColumnException("Missing column '".$sPrefix."longitude' from {$sAvailable}");
+			throw new MissingColumnException("Missing column '" . $sPrefix . "longitude' from {$sAvailable}");
 		}
-		
-		if (isset($aCols[$sPrefix.'latitude'], $aCols[$sPrefix.'longitude']))
-		{
-			return new ormGeolocation(floatval($aCols[$sPrefix.'latitude']), floatval($aCols[$sPrefix.'longitude']));
-		}
+
+		return new ormGeolocation(floatval($aCols[$sPrefix . 'latitude']), floatval($aCols[$sPrefix . 'longitude']));
 	}
-	
-	public function GetSQLValues($value)
+
+	public function GetSQLValues($value): array
 	{
 		$aValues = array();
 		if ($value instanceof ormGeolocation)
 		{
-			$aValues[$this->GetCode().'_lat'] = $value->getLatitude();
-			$aValues[$this->GetCode().'_lng'] = $value->getLongitude();
+			$aValues[$this->GetCode() . '_lat'] = $value->getLatitude();
+			$aValues[$this->GetCode() . '_lng'] = $value->getLongitude();
 		}
 		else
 		{
-			$aValues[$this->GetCode().'_lat'] = null;
-			$aValues[$this->GetCode().'_lng'] = null;
+			$aValues[$this->GetCode() . '_lat'] = null;
+			$aValues[$this->GetCode() . '_lng'] = null;
 		}
 		return $aValues;
 	}
-	
+
 	/**
+	 * @inheritDoc
 	 * @param null|string|ormGeolocation $proposedValue
-	 * @param DBObject $oHostObj
-	 * @return ormGeolocation
+	 * @param DBObject|null $oHostObj
+	 * @return ormGeolocation|null
 	 */
-	public function MakeRealValue($proposedValue, $oHostObj)
+	public function MakeRealValue($proposedValue, $oHostObj): ?ormGeolocation
 	{
 		if ($proposedValue instanceof ormGeolocation) return $proposedValue;
-		
+
 		return ormGeolocation::fromString($proposedValue);
 	}
 
@@ -94,9 +98,10 @@ class AttributeGeolocation extends AttributeDBField
 	 *
 	 * @inheritDoc
 	 */
-	public function GetAsCSV($sValue, $sSeparator = ',', $sTextQualifier = '"', $oHostObject = null, $bLocalize = true, $bConvertToPlainText = false) {
-		if (!empty($sValue) && strpos($sSeparator, ',') !== false) return $sTextQualifier.$sValue.$sTextQualifier;
-		return parent::GetAsCSV($sValue, $sSeparator, $sTextQualifier,$oHostObject, $bLocalize, $bConvertToPlainText);
+	public function GetAsCSV($sValue, $sSeparator = ',', $sTextQualifier = '"', $oHostObject = null, $bLocalize = true, $bConvertToPlainText = false): string
+	{
+		if (!empty($sValue) && str_contains($sSeparator, ',')) return $sTextQualifier . $sValue . $sTextQualifier;
+		return parent::GetAsCSV($sValue, $sSeparator, $sTextQualifier, $oHostObject, $bLocalize, $bConvertToPlainText);
 	}
 
 	/**
@@ -104,10 +109,11 @@ class AttributeGeolocation extends AttributeDBField
 	 * @param ormGeolocation $value
 	 * @throws ConfigException
 	 * @throws CoreException
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function GetAsHTML($value, $oHostObject = null, $bLocalize = true)
+	public function GetAsHTML($value, $oHostObject = null, $bLocalize = true): string
 	{
-		if ($value instanceOf ormGeolocation)
+		if ($value instanceof ormGeolocation)
 		{
 			$iWidth = $this->GetWidth();
 			$iHeight = $this->GetHeight();
@@ -127,22 +133,22 @@ class AttributeGeolocation extends AttributeDBField
 		}
 		else
 		{
-			$sHTML = '<em>'.Dict::S('UI:UndefinedObject').'</em>';
+			$sHTML = '<em>' . Dict::S('UI:UndefinedObject') . '</em>';
 		}
 		return $sHTML;
 	}
-	
+
 	/**
 	 * @inheritDoc
 	 */
-	function EnumTemplateVerbs()
+	function EnumTemplateVerbs(): array
 	{
 		return array(
-			'' => 'Plain text representation in EPSG:4326 (lat,lon)',
-			'wgs_84' => 'Plain text representation in EPSG:4326 (lat,lon)',
-			'rd' => 'Plain text representation in EPSG:28992 (X,Y)',
+			''              => 'Plain text representation in EPSG:4326 (lat,lon)',
+			'wgs_84'        => 'Plain text representation in EPSG:4326 (lat,lon)',
+			'rd'            => 'Plain text representation in EPSG:28992 (X,Y)',
 			'rijksdriehoek' => 'Plain text representation in EPSG:28992 (X,Y)',
-			'html' => 'HTML representation',
+			'html'          => 'HTML representation',
 		);
 	}
 
@@ -172,15 +178,15 @@ class AttributeGeolocation extends AttributeDBField
 	/**
 	 * @inheritDoc
 	 */
-	public function GetAsHTMLForHistory($sValue, $oHostObject = null, $bLocalize = true)
+	public function GetAsHTMLForHistory($sValue, $oHostObject = null, $bLocalize = true): string
 	{
 		return (string) $sValue;
 	}
 
-	public function GetImportColumns()
+	public function GetImportColumns(): array
 	{
 		$aColumns = array();
-		$aColumns[$this->GetCode()] = 'VARCHAR(25)'.CMDBSource::GetSqlStringColumnDefinition();
+		$aColumns[$this->GetCode()] = 'VARCHAR(25)' . CMDBSource::GetSqlStringColumnDefinition();
 
 		return $aColumns;
 	}
@@ -191,7 +197,7 @@ class AttributeGeolocation extends AttributeDBField
 	 * @return ormGeolocation|null
 	 * @throws MissingColumnException
 	 */
-	public function FromImportToValue($aCols, $sPrefix = '')
+	public function FromImportToValue($aCols, $sPrefix = ''): ?ormGeolocation
 	{
 		if (!isset($aCols[$sPrefix]))
 		{
@@ -201,43 +207,43 @@ class AttributeGeolocation extends AttributeDBField
 
 		return $this->MakeRealValue($aCols[$sPrefix], null);
 	}
-	
+
 	/**
 	 * @return int Width of the map
 	 */
-	public function GetWidth()
+	public function GetWidth(): int
 	{
 		return (int) $this->GetOptional('width', 200);
 	}
-	
+
 	/**
 	 * @return int Height of the map
 	 */
-	public function GetHeight()
+	public function GetHeight(): int
 	{
 		return (int) $this->GetOptional('height', 150);
 	}
-	
+
 	/**
-	 * @return string Image URL to use as static map
+	 * @return string|null Image URL to use as static map
 	 * @throws ConfigException
 	 * @throws CoreException
 	 */
-	public static function GetStaticMapUrl()
+	public static function GetStaticMapUrl(): ?string
 	{
 		$sStaticMapUrl = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl');
 		if ($sStaticMapUrl) return $sStaticMapUrl;
-		
+
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
 				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$f,%2$f&size=%3$dx%4$d&key=%5$s';
 				break;
-				
+
 			case 'OpenStreetMap':
 				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=%6$d';
-				
+
 			case 'MapQuest':
 				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
 				break;
@@ -246,33 +252,38 @@ class AttributeGeolocation extends AttributeDBField
 				if ($sApiKey) return 'https://api.maptiler.com/maps/bright-v2/static/auto/%3$dx%4$d@2x.png?markers=%1$f,%2$f&key=%5$s';
 				break;
 		}
+
 		return null;
 	}
 }
 
 class ormGeolocation implements JsonSerializable
 {
-	protected $fLatitude = 0.0;
-	protected $fLongitude = 0.0;
-	
-	public function __construct($fLatitude, $fLongitude)
+	protected float $fLatitude = 0.0;
+	protected float $fLongitude = 0.0;
+
+	/**
+	 * @param float $fLatitude Latitude
+	 * @param float $fLongitude Longitude
+	 */
+	public function __construct(float $fLatitude, float $fLongitude)
 	{
 		$this->fLatitude = $fLatitude;
 		$this->fLongitude = $fLongitude;
 	}
-	
+
 	/**
 	 * @return float
 	 */
-	public function getLatitude()
+	public function getLatitude(): float
 	{
 		return $this->fLatitude;
 	}
-	
+
 	/**
 	 * @return float
 	 */
-	public function getLongitude()
+	public function getLongitude(): float
 	{
 		return $this->fLongitude;
 	}
@@ -280,10 +291,10 @@ class ormGeolocation implements JsonSerializable
 	/**
 	 * Calculate the X coordinate in the Rijksdriehoek (RD) system
 	 *
-	 * @since 1.6.0
 	 * @return float
+	 * @since 1.6.0
 	 */
-	public function getRijksdriehoekX()
+	public function getRijksdriehoekX(): float
 	{
 		static $aPQR = [
 			[0,1,190094.945],
@@ -315,10 +326,10 @@ class ormGeolocation implements JsonSerializable
 	/**
 	 * Calculate the Y coordinate in the Rijksdriehoek (RD) system
 	 *
-	 * @since 1.6.0
 	 * @return float
+	 * @since 1.6.0
 	 */
-	public function getRijksdriehoekY()
+	public function getRijksdriehoekY(): float
 	{
 		static $aPQS = [
 			[1, 0, 309056.544],
@@ -347,12 +358,12 @@ class ormGeolocation implements JsonSerializable
 
 		return $fY;
 	}
-	
+
 	public function __toString()
 	{
 		return sprintf('%f,%f', $this->fLatitude, $this->fLongitude);
 	}
-	
+
 	/**
 	 * @inheritDoc
 	 * @return array{lat: float, lng: float}
@@ -366,10 +377,10 @@ class ormGeolocation implements JsonSerializable
 	}
 
 	/**
-	 * @since 1.6.0
 	 * @return static
+	 * @since 1.6.0
 	 */
-	public static function getRijksdriehoekReference()
+	public static function getRijksdriehoekReference(): static
 	{
 		return new static(52.1551744, 5.38720621);
 	}
@@ -377,11 +388,11 @@ class ormGeolocation implements JsonSerializable
 	/**
 	 * Create ormGeolocation object from string input
 	 *
-	 * @since 1.8.0
 	 * @param string|null $sInput
 	 * @return static|null
+	 * @since 1.8.0
 	 */
-	public static function fromString(?string $sInput)
+	public static function fromString(?string $sInput): null|static
 	{
 		if (preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($sInput), $aMatches))
 		{

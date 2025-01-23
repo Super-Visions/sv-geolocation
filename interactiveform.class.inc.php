@@ -6,35 +6,40 @@
 
 class GeolocationInteractiveForm implements iApplicationUIExtension
 {
-	
+
 	/**
 	 * @inheritDoc
 	 */
-	public function OnDisplayProperties($oObject, WebPage $oPage, $bEditMode = false)
+	public function OnDisplayProperties($oObject, WebPage $oPage, $bEditMode = false): void
 	{
 		if (!$bEditMode) return;
-		
+
 		$aAttributes = MetaModel::FlattenZList(MetaModel::GetZListItems(get_class($oObject), 'details'));
 		foreach($aAttributes as $sAttCode)
 		{
-			$oAttDef = MetaModel::GetAttributeDef(get_class($oObject), $sAttCode);
-
-			if (is_a($oAttDef, AttributeGeolocation::class) && !($oObject->GetAttributeFlags($sAttCode) & (OPT_ATT_READONLY | OPT_ATT_SLAVE)))
+			try
 			{
-				$this->DisplayInteractiveField($oAttDef, $oObject, $oPage);
-			}
+				$oAttDef = MetaModel::GetAttributeDef(get_class($oObject), $sAttCode);
+
+				if (is_a($oAttDef, AttributeGeolocation::class) && !($oObject->GetAttributeFlags($sAttCode) & (OPT_ATT_READONLY | OPT_ATT_SLAVE)))
+				{
+					$this->DisplayInteractiveField($oAttDef, $oObject, $oPage);
+				}
+			} catch (Exception $e) {}
 		}
 	}
-	
+
 	/**
 	 * Add additional code to the page to alter the specified attribute into an interactive map
 	 *
 	 * @param AttributeGeolocation $oAttDef The field to enhance
 	 * @param DBObject $oObject The object being displayed
 	 * @param WebPage $oPage The output context
+	 * @throws ConfigException
 	 * @throws CoreException
+	 * @throws Exception
 	 */
-	protected function DisplayInteractiveField(AttributeGeolocation $oAttDef, DBObject $oObject, WebPage $oPage)
+	protected function DisplayInteractiveField(AttributeGeolocation $oAttDef, DBObject $oObject, WebPage $oPage): void
 	{
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
@@ -48,22 +53,18 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
-				switch (UserRights::GetUserLanguage())
+				$sLang = match (UserRights::GetUserLanguage())
 				{
-					case 'PT BR':
-					case 'ZH CN':
-						$sLang = strtolower($sLang).'-'.$sRegion;
-						break;
-					default:
-						$sLang = strtolower($sLang);
-						break;
-				}
+					'PT BR', 'ZH CN' => strtolower($sLang) . '-' . $sRegion,
+					default => strtolower($sLang),
+				};
 
 				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
 				$oPage->LinkScriptFromModule('sv-geolocation/js/google-maps-utils.js');
 
 				$oMapOptions = array('center' => new ormGeolocation($iDefaultLat, $iDefaultLng), 'zoom' => $iZoom);
 				break;
+
 			case 'MapLibre':
 			case 'MapTiler':
 				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
@@ -77,55 +78,55 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 		}
 		$oPage->add_ready_script(sprintf('make_interactive_map(%s, %s);', json_encode($oAttOptions), json_encode($oMapOptions)));
 	}
-	
+
 	/**
-	 * Unused
+	 * @ignore Unused
 	 */
 	public function OnDisplayRelations($oObject, WebPage $oPage, $bEditMode = false)
 	{
 	}
-	
+
 	/**
-	 * Unused
+	 * @ignore Unused
 	 */
 	public function OnFormSubmit($oObject, $sFormPrefix = '')
 	{
 	}
-	
+
 	/**
-	 * Unused
+	 * @ignore Unused
 	 */
 	public function OnFormCancel($sTempId)
 	{
 	}
-	
+
 	/**
-	 * Unused
+	 * @ignore Unused
 	 */
-	public function EnumUsedAttributes($oObject)
+	public function EnumUsedAttributes($oObject): array
 	{
-		return array();
+		return [];
 	}
-	
+
 	/**
-	 * Unused
+	 * @ignore Unused
 	 */
 	public function GetIcon($oObject)
 	{
 	}
-	
+
 	/**
-	 * Unused
+	 * @ignore Unused
 	 */
 	public function GetHilightClass($oObject)
 	{
 	}
-	
+
 	/**
-	 * Unused
+	 * @ignore Unused
 	 */
-	public function EnumAllowedActions(DBObjectSet $oSet)
+	public function EnumAllowedActions(DBObjectSet $oSet): array
 	{
-		return array();
+		return [];
 	}
 }

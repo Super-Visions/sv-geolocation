@@ -5,12 +5,16 @@
  */
 
 use Combodo\iTop\Application\UI\Base\Component\Html\Html;
+use Combodo\iTop\Application\UI\Base\Layout\UIContentBlock;
 use Combodo\iTop\Application\UI\Base\Layout\UIContentBlockUIBlockFactory;
 
 class GeoMap extends Dashlet
 {
-	static protected $aAttributeList;
-	
+	/**
+	 * @var array{string, array{string, string}}
+	 */
+	static protected array $aAttributeList;
+
 	/**
 	 * @param ModelReflection $oModelReflection
 	 * @param string $sId
@@ -23,18 +27,19 @@ class GeoMap extends Dashlet
 		$this->aProperties['query'] = 'SELECT Location';
 		$this->aProperties['attribute'] = '';
 	}
-	
+
 	/**
 	 * @inheritDoc
+	 * @throws Exception
 	 */
-	public function Render($oPage, $bEditMode = false, $aExtraParams = array())
+	public function Render($oPage, $bEditMode = false, $aExtraParams = array()): UIContentBlock
 	{
 		// Load values
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 		$iDefaultLat = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_latitude');
 		$iDefaultLng = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_longitude');
 		$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
-		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '' );
+		$sId = sprintf('map_%d%s', $this->sId, $bEditMode ? '_edit' : '');
 
 		// Prepare page
 		$oPage->add_dict_entry('UI:ClickToCreateNew');
@@ -54,7 +59,7 @@ STYLE
 
 		$sDisplaySearch = $this->aProperties['search'] ? 'block' : 'none';
 		$sSearch = Dict::S('UI:Button:Search');
-		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot().'sv-geolocation/images/world-map.jpg';
+		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot() . 'sv-geolocation/images/world-map.jpg';
 
 		$oBlock = UIContentBlockUIBlockFactory::MakeStandard(null, ["dashlet-content"]);
 		$oBlock->AddSubBlock(new Html(<<<HTML
@@ -70,18 +75,17 @@ HTML
 		$sCreateUrl = null;
 		if (UserRights::IsActionAllowed($oFilter->GetClass(), UR_ACTION_MODIFY))
 		{
-			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot().'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
+			$sCreateUrl = sprintf(utils::GetAbsoluteUrlAppRoot() . 'pages/UI.php?operation=new&class=%s&default[%s]=', $oFilter->GetClass(), $this->aProperties['attribute']);
 		}
 
 		$aDashletOptions = array(
-			'id' => $sId,
+			'id'         => $sId,
 			'classLabel' => MetaModel::GetName($oFilter->GetClass()),
-			'createUrl' => $sCreateUrl,
-			'map' => array('center' => array('lat' => $iDefaultLat, 'lng' => $iDefaultLng), 'zoom' => $iZoom),
-			'apiKey' => $sApiKey,
-			'locations' => array(),
+			'createUrl'  => $sCreateUrl,
+			'map'        => ['center' => ['lat' => $iDefaultLat, 'lng' => $iDefaultLng], 'zoom' => $iZoom],
+			'locations'  => [],
 		);
-		
+
 		// Load objects
 		$oSet = new DBObjectSet($oFilter);
 		while ($oCurrObj = $oSet->Fetch())
@@ -89,10 +93,10 @@ HTML
 			if ($oCurrObj->Get($this->aProperties['attribute']))
 			{
 				$aDashletOptions['locations'][] = array(
-					'title' => $oCurrObj->GetName(),
-					'icon' => $oCurrObj->GetIcon(false),
+					'title'    => $oCurrObj->GetName(),
+					'icon'     => $oCurrObj->GetIcon(false),
 					'position' => $oCurrObj->Get($this->aProperties['attribute']),
-					'tooltip' => static::GetTooltip($oCurrObj),
+					'tooltip'  => static::GetTooltip($oCurrObj),
 				);
 			}
 		}
@@ -117,26 +121,27 @@ HTML
 
 		return $oBlock;
 	}
-	
+
 	/**
 	 * Add properties fields
-	 * @param DesignerForm $oForm
-	 * @return mixed
+	 * @inheritDoc
+	 * @throws CoreException
 	 */
-	public function GetPropertiesFields(DesignerForm $oForm)
+	public function GetPropertiesFields(DesignerForm $oForm): void
 	{
 		$oHeightField = new DesignerIntegerField('height', Dict::S('UI:DashletGeoMap:Prop-Height'), $this->aProperties['height']);
 		$oHeightField->SetMandatory();
 		$oForm->AddField($oHeightField);
-		
+
 		$oSearchField = new DesignerBooleanField('search', Dict::S('UI:DashletGeoMap:Prop-Search'), $this->aProperties['search']);
 		$oForm->AddField($oSearchField);
-		
+
 		$oQueryField = new DesignerLongTextField('query', Dict::S('UI:DashletGeoMap:Prop-Query'), $this->aProperties['query']);
 		$oQueryField->SetMandatory();
 		$oForm->AddField($oQueryField);
-		
-		try {
+
+		try
+		{
 			$sClass = $this->oModelReflection->GetQuery($this->aProperties['query'])->GetClass();
 			$oAttributeField = new DesignerComboField('attribute', Dict::S('UI:DashletGeoMap:Prop-Attribute'), $this->aProperties['attribute']);
 			$oAttributeField->SetAllowedValues(static::GetGeolocationAttributes($sClass));
@@ -151,21 +156,22 @@ HTML
 			$oForm->AddField($oAttributeField);
 		}
 	}
-	
+
 	/**
-	 * @param array $aValues
-	 * @param array $aUpdatedFields
-	 * @return Dashlet
+	 * @inheritDoc
+	 * @return GeoMap
 	 */
-	public function Update($aValues, $aUpdatedFields)
+	public function Update($aValues, $aUpdatedFields): GeoMap
 	{
 		if (in_array('query', $aUpdatedFields))
 		{
-			try {
+			try
+			{
 				$sCurrClass = $this->oModelReflection->GetQuery($aValues['query'])->GetClass();
 				$sPrevClass = $this->oModelReflection->GetQuery($this->aProperties['query'])->GetClass();
-				
-				if ($sCurrClass != $sPrevClass) {
+
+				if ($sCurrClass != $sPrevClass)
+				{
 					$this->bFormRedrawNeeded = true;
 				}
 			}
@@ -174,46 +180,55 @@ HTML
 				$this->bFormRedrawNeeded = true;
 			}
 		}
-		
+
 		return parent::Update($aValues, $aUpdatedFields);
 	}
-	
+
 	/**
 	 * Dashlet info
-	 * @return array
+	 * @return array{label: string, icon: string, description: string}
 	 */
-	public static function GetInfo()
+	public static function GetInfo(): array
 	{
 		return array(
-			'label' => Dict::S('UI:DashletGeoMap:Label', 'GeoMap'),
-			'icon' => 'env-'.MetaModel::GetEnvironment().'/sv-geolocation/images/geomap.png',
+			'label'       => Dict::S('UI:DashletGeoMap:Label', 'GeoMap'),
+			'icon'        => 'env-' . MetaModel::GetEnvironment() . '/sv-geolocation/images/geomap.png',
 			'description' => Dict::S('UI:DashletGeoMap:Description'),
 		);
 	}
-	
-	protected static function GetTooltip(DBObject $oCurrObj)
+
+	/**
+	 * @param DBObject $oCurrObj
+	 * @return string
+	 * @throws ArchivedObjectException
+	 * @throws CoreException
+	 * @throws DictExceptionMissingString
+	 * @throws Exception
+	 */
+	protected static function GetTooltip(DBObject $oCurrObj): string
 	{
 		$sClass = get_class($oCurrObj);
-		$sTooltip = $oCurrObj->GetHyperlink().'<hr/>'.PHP_EOL;
-		$sTooltip .= '<table><tbody>'.PHP_EOL;
-		foreach(MetaModel::GetZListItems($sClass, 'list') as $sAttCode)
+		$sTooltip = $oCurrObj->GetHyperlink() . '<hr/>' . PHP_EOL;
+		$sTooltip .= '<table><tbody>' . PHP_EOL;
+		foreach (MetaModel::GetZListItems($sClass, 'list') as $sAttCode)
 		{
 			$oAttDef = MetaModel::GetAttributeDef($sClass, $sAttCode);
-			$sTooltip .= '<tr><td>'.$oAttDef->GetLabel().':&nbsp;</td><td>'.$oCurrObj->GetAsHtml($sAttCode).'</td></tr>'.PHP_EOL;
+			$sTooltip .= '<tr><td>' . $oAttDef->GetLabel() . ':&nbsp;</td><td>' . $oCurrObj->GetAsHtml($sAttCode) . '</td></tr>' . PHP_EOL;
 		}
 		$sTooltip .= '</tbody></table>';
+
 		return $sTooltip;
 	}
-	
+
 	/**
 	 * @param string $sClass
-	 * @return array
+	 * @return array{string, string}
 	 * @throws CoreException
 	 */
-	protected static function GetGeolocationAttributes($sClass)
+	protected static function GetGeolocationAttributes(string $sClass): array
 	{
 		if (isset(static::$aAttributeList[$sClass])) return static::$aAttributeList[$sClass];
-		
+
 		$aAttributes = array();
 		foreach (MetaModel::ListAttributeDefs($sClass) as $sAttribute => $oAttributeDef)
 		{
@@ -223,7 +238,7 @@ HTML
 			}
 		}
 		static::$aAttributeList[$sClass] = $aAttributes;
-		
+
 		return $aAttributes;
 	}
 }
