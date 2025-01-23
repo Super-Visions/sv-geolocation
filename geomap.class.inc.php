@@ -105,7 +105,14 @@ HTML
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
 		{
 			case 'GoogleMaps':
-				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s', $sApiKey));
+				list($sLang, $sRegion) = explode(' ', UserRights::GetUserLanguage(), 2);
+				$sLang = match (UserRights::GetUserLanguage())
+				{
+					'PT BR', 'ZH CN' => strtolower($sLang) . '-' . $sRegion,
+					default => strtolower($sLang),
+				};
+
+				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
 				$oPage->LinkScriptFromModule('sv-geolocation/js/google-maps-utils.js');
 				break;
 			case 'MapLibre':
