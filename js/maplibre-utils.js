@@ -100,6 +100,9 @@ function render_geomap(oDashlet, aLocations) {
         zoom: oDashlet.map.zoom,
     });
 
+    // Search not (yet) supported
+    $('#' + oDashlet.id + '_panel').hide();
+
     // Add zoom and rotation controls to the map.
     oMap.addControl(new maplibregl.NavigationControl());
     // Add fullscreen control to the map
