@@ -96,8 +96,8 @@ function render_geomap(oDashlet, aLocations) {
     const oMap = new maplibregl.Map({
         container: oDashlet.id,
         style: oDashlet.style,
-        center: maplibregl.LngLat.convert(oDashlet.map.center),
-        zoom: oDashlet.map.zoom,
+        center: maplibregl.LngLat.convert(oDashlet.center),
+        zoom: oDashlet.zoom,
     });
 
     // Search not (yet) supported
@@ -125,7 +125,7 @@ function render_geomap(oDashlet, aLocations) {
                 })
             },
             cluster: true,
-            clusterMaxZoom: oDashlet.map.zoom + 3, // Max zoom to cluster points on
+            clusterMaxZoom: oDashlet.zoom + 3, // Max zoom to cluster points on
             clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
         });
 

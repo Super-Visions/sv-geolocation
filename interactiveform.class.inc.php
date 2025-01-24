@@ -59,10 +59,10 @@ class GeolocationInteractiveForm implements iApplicationUIExtension
 					default => strtolower($sLang),
 				};
 
-				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
+				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s&libraries=marker', $sApiKey, $sLang));
 				$oPage->LinkScriptFromModule('sv-geolocation/js/google-maps-utils.js');
 
-				$oMapOptions = array('center' => new ormGeolocation($iDefaultLat, $iDefaultLng), 'zoom' => $iZoom);
+				$oMapOptions = ['center' => new ormGeolocation($iDefaultLat, $iDefaultLng), 'zoom' => $iZoom, 'mapId' => $oAttDef->GetCode()];
 				break;
 
 			case 'MapLibre':

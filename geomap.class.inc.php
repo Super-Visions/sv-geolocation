@@ -82,7 +82,8 @@ HTML
 			'id'         => $sId,
 			'classLabel' => MetaModel::GetName($oFilter->GetClass()),
 			'createUrl'  => $sCreateUrl,
-			'map'        => ['center' => ['lat' => $iDefaultLat, 'lng' => $iDefaultLng], 'zoom' => $iZoom],
+			'center'     => ['lat' => $iDefaultLat, 'lng' => $iDefaultLng],
+			'zoom'       => $iZoom,
 			'locations'  => [],
 		);
 
@@ -112,7 +113,7 @@ HTML
 					default => strtolower($sLang),
 				};
 
-				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s', $sApiKey, $sLang));
+				$oPage->LinkScriptFromURI(sprintf('https://maps.googleapis.com/maps/api/js?key=%s&callback=$.noop&language=%s&libraries=marker', $sApiKey, $sLang));
 				$oPage->LinkScriptFromModule('sv-geolocation/js/google-maps-utils.js');
 				break;
 			case 'MapLibre':
