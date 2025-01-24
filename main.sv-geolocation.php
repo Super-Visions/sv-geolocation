@@ -232,7 +232,7 @@ class AttributeGeolocation extends AttributeDBField
 	public static function GetStaticMapUrl(): ?string
 	{
 		$sStaticMapUrl = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'staticmapurl');
-		if ($sStaticMapUrl) return $sStaticMapUrl;
+		if (!is_null($sStaticMapUrl)) return $sStaticMapUrl;
 
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
@@ -240,9 +240,6 @@ class AttributeGeolocation extends AttributeDBField
 			case 'GoogleMaps':
 				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$f,%2$f&size=%3$dx%4$d&key=%5$s';
 				break;
-
-			case 'OpenStreetMap':
-				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=%6$d';
 
 			case 'MapQuest':
 				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
