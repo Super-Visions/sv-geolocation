@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - German translation, thanks to [@rudnerbjoern](https://github.com/rudnerbjoern).
 
+### Fixed
+
+- Modernized some code for php compatibility
+
 ## 1.9.2 - 2024-09-05
 
 ### Added

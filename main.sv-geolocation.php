@@ -111,13 +111,14 @@ class AttributeGeolocation extends AttributeDBField
 			$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 			$iZoom = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'default_zoom');
 			$bDisplay = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'display_coordinates');
-			$sStaticMapUrl = sprintf(static::GetStaticMapUrl(), $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight, $sApiKey, $iZoom);
+			$sStaticMapUrl = static::GetStaticMapUrl();
 			if (empty($sStaticMapUrl))
 			{
 				$sHTML = sprintf('<pre>%s</pre>', $value);
 			}
 			else
 			{
+				$sStaticMapUrl = sprintf($sStaticMapUrl, $value->GetLatitude(), $value->GetLongitude(), $iWidth, $iHeight, $sApiKey, $iZoom);
 				$sHTML = sprintf('<img src="%s" width="%d" height="%d" title="%s"/>', $sStaticMapUrl, $iWidth, $iHeight, $value);
 				if ($bDisplay) $sHTML .= sprintf('<pre>%s</pre>', $value);
 			}
@@ -226,20 +227,12 @@ class AttributeGeolocation extends AttributeDBField
 		if ($sStaticMapUrl) return $sStaticMapUrl;
 		
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
-		switch (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider'))
-		{
-			case 'GoogleMaps':
-				if ($sApiKey) return 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$f,%2$f&size=%3$dx%4$d&key=%5$s';
-				break;
-				
-			case 'OpenStreetMap':
-				return 'http://staticmap.openstreetmap.de/staticmap.php?center=%1$f,%2$f&markers=%1$f,%2$f,red-pushpin&size=%3$dx%4$d&zoom=%6$d';
-				
-			case 'MapQuest':
-				if ($sApiKey) return 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s';
-				break;
-		}
-		return null;
+		return match (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider')) {
+			'GoogleMaps' => ($sApiKey) ? 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$f,%2$f&size=%3$dx%4$d&key=%5$s' : null,
+			'MapQuest'   => ($sApiKey) ? 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s' : null,
+			'MapTiler'   => ($sApiKey) ? 'https://api.maptiler.com/maps/bright-v2/static/auto/%3$dx%4$d@2x.png?markers=%1$f,%2$f&key=%5$s' : null,
+			default      => null,
+		};
 	}
 }
 
