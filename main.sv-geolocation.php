@@ -82,8 +82,8 @@ class AttributeGeolocation extends AttributeDBField
 	public function MakeRealValue($proposedValue, $oHostObj)
 	{
 		if ($proposedValue instanceof ormGeolocation) return $proposedValue;
-		
-		return ormGeolocation::fromString($proposedValue);
+
+		return ormGeolocation::fromString($proposedValue ?? '');
 	}
 
 	/**
@@ -364,10 +364,9 @@ class ormGeolocation implements JsonSerializable
 	 * Create ormGeolocation object from string input
 	 *
 	 * @since 1.8.0
-	 * @param string|null $sInput
 	 * @return static|null
 	 */
-	public static function fromString(?string $sInput)
+	public static function fromString(string $sInput)
 	{
 		if (preg_match('{^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$}', trim($sInput), $aMatches))
 		{
