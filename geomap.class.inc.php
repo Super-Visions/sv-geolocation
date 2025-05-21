@@ -7,6 +7,8 @@
 use Combodo\iTop\Application\UI\Base\Component\Html\Html;
 use Combodo\iTop\Application\UI\Base\Layout\UIContentBlock;
 use Combodo\iTop\Application\UI\Base\Layout\UIContentBlockUIBlockFactory;
+use Combodo\iTop\Service\Router\Router;
+use Combodo\iTop\Service\SummaryCard\SummaryCardService;
 
 class GeoMap extends Dashlet
 {
@@ -99,6 +101,7 @@ HTML
 					'icon'     => $oCurrObj->GetIcon(false),
 					'position' => $oCurrObj->Get($this->aProperties['attribute']),
 					'tooltip'  => static::GetTooltip($oCurrObj),
+					'summary'  => static::GetSummaryCard($oCurrObj),
 				);
 			}
 		}
@@ -231,6 +234,19 @@ HTML
 		$sTooltip .= '</tbody></table>';
 
 		return $sTooltip;
+	}
+
+	/**
+	 * @return string The URL to retrieve the summary card
+	 * @throws Exception
+	 */
+	protected static function GetSummaryCard(DBObject $oCurrObj): string
+	{
+		$sClass = get_class($oCurrObj);
+		if (!SummaryCardService::IsAllowedForClass($sClass)) return '';
+
+		$oRouter = Router::GetInstance();
+		return $oRouter->GenerateUrl("object.summary", ["obj_class" => $sClass, "obj_key" => $oCurrObj->GetKey()]);
 	}
 
 	/**

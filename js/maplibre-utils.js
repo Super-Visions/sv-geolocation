@@ -241,7 +241,18 @@ function render_geomap(oDashlet) {
                 aCoordinates[0] += e.lngLat.lng > aCoordinates[0] ? 360 : -360;
             }
 
-            new maplibregl.Popup()
+            if (e.features[0].properties.summary){
+                $.ajax(e.features[0].properties.summary, {
+                    success: function (sData) {
+                        const oMarker = new maplibregl.Marker()
+                            .setLngLat(aCoordinates)
+                            .addTo(oMap);
+                        const oMarkerElement = $(oMarker.getElement()).html(sData);
+
+                        oMarkerElement.on('mouseleave',() => { oMarker.remove(); })
+                    }
+                });
+            } else new maplibregl.Popup()
                 .setLngLat(aCoordinates)
                 .setHTML(e.features[0].properties.tooltip)
                 .addTo(oMap);
