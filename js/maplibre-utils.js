@@ -129,6 +129,26 @@ function render_geomap(oDashlet) {
             clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
         });
 
+        // Load icons
+        const oSvgManager = new maplibregl.SvgManager(oMap);
+        try {
+            if (oDashlet.classIcon.endsWith('.svg')) oSvgManager.add('default', oDashlet.classIcon, 48, 48);
+            else {
+                const classIcon = await oMap.loadImage(oDashlet.classIcon);
+                oMap.addImage('default', classIcon.data);
+            }
+        } catch (e) {}
+        for (const oLocation of oDashlet.locations) {
+            try {
+                if (oLocation.icon.endsWith('.svg') && !oSvgManager.hasImage(oLocation.icon)) {
+                    await oSvgManager.add(oLocation.icon, oLocation.icon, 48, 48);
+                } else if (!oMap.hasImage(oLocation.icon)) {
+                    const image = await oMap.loadImage(oLocation.icon);
+                    oMap.addImage(oLocation.icon, image.data);
+                }
+            } catch (e) {}
+        }
+
         oMap.addLayer({
             id: 'clusters',
             type: 'circle',
@@ -174,15 +194,17 @@ function render_geomap(oDashlet) {
 
         oMap.addLayer({
             id: 'unclustered-point',
-            type: 'circle',
+            type: 'symbol',
             source: 'locations',
             filter: ['!', ['has', 'point_count']],
-            paint: {
-                'circle-color': '#ea7d1e',
-                'circle-radius': 4,
-                'circle-stroke-width': 1,
-                'circle-stroke-color': '#fff'
-            }
+            layout: {
+                'icon-image': [
+                    'coalesce',
+                    ['image', ['get', 'icon']],
+                    ['image', 'default']
+                ],
+                'text-field': ['get', 'title'],
+            },
         });
 
         // inspect a cluster on click
