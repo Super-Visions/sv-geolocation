@@ -80,7 +80,7 @@ function map_save_location(oField, oLatLng) {
     else oField.val('');
 }
 
-function render_geomap(oDashlet, aLocations) {
+function render_geomap(oDashlet) {
     const oMap = new google.maps.Map(document.getElementById(oDashlet.id), {
         mapId: oDashlet.id,
         center: oDashlet.center,

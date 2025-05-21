@@ -92,7 +92,7 @@ function map_save_location(oField, oLngLat) {
     else oField.val('');
 }
 
-function render_geomap(oDashlet, aLocations) {
+function render_geomap(oDashlet) {
     const oMap = new maplibregl.Map({
         container: oDashlet.id,
         style: oDashlet.style,
