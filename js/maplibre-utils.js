@@ -248,6 +248,13 @@ function render_geomap(oDashlet) {
         });
     });
 
+    oMap.on('mouseenter', 'unclustered-point', () => {
+        oMap.getCanvas().style.cursor = 'pointer';
+    });
+    oMap.on('mouseleave', 'unclustered-point', () => {
+        oMap.getCanvas().style.cursor = '';
+    });
+
     // add create object functionality
     if (oDashlet.createUrl) {
         const oMarker = new maplibregl.Marker({draggable: true});
