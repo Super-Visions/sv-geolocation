@@ -198,11 +198,13 @@ function render_geomap(oDashlet) {
             source: 'locations',
             filter: ['!', ['has', 'point_count']],
             layout: {
+                'icon-overlap': 'cooperative',
                 'icon-image': [
                     'coalesce',
                     ['image', ['get', 'icon']],
                     ['image', 'default']
                 ],
+                'text-allow-overlap': true,
                 'text-field': ['get', 'title'],
             },
         });
