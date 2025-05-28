@@ -132,19 +132,19 @@ function render_geomap(oDashlet) {
         // Load icons
         const oSvgManager = new maplibregl.SvgManager(oMap);
         try {
-            if (oDashlet.classIcon.endsWith('.svg')) oSvgManager.add('default', oDashlet.classIcon, 48, 48);
+            if (oDashlet.classIcon.endsWith('.svg')) oSvgManager.add('default', oDashlet.classIcon, 32, 32);
             else {
-                const classIcon = await oMap.loadImage(oDashlet.classIcon);
-                oMap.addImage('default', classIcon.data);
+                const oImage = await oMap.loadImage(oDashlet.classIcon);
+                oMap.addImage('default', await window.createImageBitmap(oImage.data, {resizeWidth: 32, resizeHeight: 32}));
             }
         } catch (e) {}
         for (const oLocation of oDashlet.locations) {
             try {
                 if (oLocation.icon.endsWith('.svg') && !oSvgManager.hasImage(oLocation.icon)) {
-                    await oSvgManager.add(oLocation.icon, oLocation.icon, 48, 48);
+                    await oSvgManager.add(oLocation.icon, oLocation.icon, 32, 32);
                 } else if (!oMap.hasImage(oLocation.icon)) {
-                    const image = await oMap.loadImage(oLocation.icon);
-                    oMap.addImage(oLocation.icon, image.data);
+                    const oImage = await oMap.loadImage(oLocation.icon);
+                    oMap.addImage(oLocation.icon, await window.createImageBitmap(oImage.data, {resizeWidth: 32, resizeHeight: 32}));
                 }
             } catch (e) {}
         }
