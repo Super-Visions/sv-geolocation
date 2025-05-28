@@ -206,6 +206,9 @@ function render_geomap(oDashlet) {
                 ],
                 'text-allow-overlap': true,
                 'text-field': ['get', 'title'],
+                'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                'text-radial-offset': 1.1,
+                'text-justify': 'auto',
             },
         });
 
