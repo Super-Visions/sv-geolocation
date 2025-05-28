@@ -252,9 +252,7 @@ function render_geomap(oDashlet) {
                         const oMarker = new maplibregl.Marker()
                             .setLngLat(aCoordinates)
                             .addTo(oMap);
-                        const oMarkerElement = $(oMarker.getElement()).html(sData);
-
-                        oMarkerElement.on('mouseleave',() => { oMarker.remove(); })
+                        $(oMarker.getElement()).html(sData).on('mouseleave',() => { oMarker.remove(); });
                     }
                 });
             } else new maplibregl.Popup()
@@ -264,11 +262,31 @@ function render_geomap(oDashlet) {
         });
     });
 
-    oMap.on('mouseenter', 'unclustered-point', () => {
+    let popupDelay = undefined;
+    oMap.on('mouseenter', 'unclustered-point', (e) => {
         oMap.getCanvas().style.cursor = 'pointer';
+
+        if (e.features[0].properties.summary){
+            const aCoordinates = e.features[0].geometry.coordinates.slice();
+            while (Math.abs(e.lngLat.lng - aCoordinates[0]) > 180) {
+                aCoordinates[0] += e.lngLat.lng > aCoordinates[0] ? 360 : -360;
+            }
+
+            popupDelay = setTimeout(() => {
+                $.ajax(e.features[0].properties.summary, {
+                    success: function (sData) {
+                        const oMarker = new maplibregl.Marker()
+                            .setLngLat(aCoordinates)
+                            .addTo(oMap);
+                        $(oMarker.getElement()).html(sData).on('mouseleave',() => { oMarker.remove(); });
+                    }
+                });
+            }, 800);
+        }
     });
     oMap.on('mouseleave', 'unclustered-point', () => {
         oMap.getCanvas().style.cursor = '';
+        clearTimeout(popupDelay);
     });
 
     // add create object functionality
