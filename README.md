@@ -27,7 +27,11 @@ Specify the provider you want to use for interactive maps.
 
 Depending on the provider you are using, you might need to enter the API key.
 
-To use maps from Google Maps, you will need to [acquire an API key](https://developers.google.com/maps/documentation/javascript/get-api-key).
+How to get API keys for:
+
+* [Google Maps](https://developers.google.com/maps/documentation/javascript/get-api-key)
+* [MapTiler](https://docs.maptiler.com/cloud/api/authentication-key/#api-key)
+* [MapQuest](https://developer.mapquest.com/documentation/)
 
 ### staticmapurl
 
