@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - German translation, thanks to [@rudnerbjoern](https://github.com/rudnerbjoern).
+- Added new MapLibre providers for interactive maps, which required some refactoring.
 
 ### Fixed
 
