@@ -21,6 +21,7 @@ Specify the provider you want to use for interactive maps.
 * `MapLibre`
   * `MapTiler`
   * `OpenStreetMap`
+  * `MapQuest`
 
 ### api_key
 
@@ -48,7 +49,7 @@ Example values for `staticmapurl`:
 * [Google Maps](https://developers.google.com/maps/documentation/static-maps/intro):
 `https://maps.googleapis.com/maps/api/staticmap?markers=%f,%f&size=%dx%d&key=%s`.
 * [MapQuest](https://developer.mapquest.com/documentation/static-map-api/v5/):
-`https://www.mapquestapi.com/staticmap/v5/map?locations=%f,%f&size=%d,%d&key=%s&zoom=%d`
+`https://www.mapquestapi.com/staticmap/v5/map?locations=%f,%f&size=%d,%d@2x&key=%s&zoom=%d`
 * [MapTiler](https://docs.maptiler.com/cloud/api/static-maps/):
 `https://api.maptiler.com/maps/bright-v2/static/auto/%3$dx%4$d@2x.png?markers=%1$f,%2$f&key=%5$s`
 
@@ -65,6 +66,7 @@ The module has default values for the following providers:
 * [MapTiler](https://docs.maptiler.com/cloud/api/maps/#style-json-of-the-map):
 `https://api.maptiler.com/maps/bright-v2/style.json?key=YOUR_MAPTILER_API_KEY`
 * OpenStreetMap
+* MapQuest
 
 ### default_latitude
 

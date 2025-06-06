@@ -123,6 +123,7 @@ HTML
 			case 'MapLibre':
 			case 'MapTiler':
 			case 'OpenStreetMap':
+			case 'MapQuest':
 				$aDashletOptions['style'] = AttributeGeolocation::GetStyle();
 
 				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');

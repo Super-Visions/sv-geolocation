@@ -238,7 +238,7 @@ class AttributeGeolocation extends AttributeDBField
 		$sApiKey = utils::GetConfig()->GetModuleSetting('sv-geolocation', 'api_key');
 		return match (utils::GetConfig()->GetModuleSetting('sv-geolocation', 'provider')) {
 			'GoogleMaps' => ($sApiKey) ? 'https://maps.googleapis.com/maps/api/staticmap?markers=%1$f,%2$f&size=%3$dx%4$d&key=%5$s' : null,
-			'MapQuest'   => ($sApiKey) ? 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d&zoom=%6$d&key=%5$s' : null,
+			'MapQuest'   => ($sApiKey) ? 'https://www.mapquestapi.com/staticmap/v5/map?locations=%1$f,%2$f&size=%3$d,%4$d@2x&zoom=%6$d&key=%5$s' : null,
 			'MapTiler'   => ($sApiKey) ? 'https://api.maptiler.com/maps/bright-v2/static/auto/%3$dx%4$d@2x.png?markers=%1$f,%2$f&key=%5$s' : null,
 			default      => null,
 		};
@@ -279,6 +279,27 @@ class AttributeGeolocation extends AttributeDBField
 			case 'MapTiler':
 				if ($sApiKey) return sprintf('https://api.maptiler.com/maps/bright-v2/style.json?key=%s', $sApiKey);
 				break;
+
+			case 'MapQuest':
+				return [
+					'version' => 8,
+					'glyphs'  => 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+					'sources' => ['mapquest' => [
+						'type'        => 'raster',
+						'tiles'       => [
+							'https://a.tiles.mapquest.com/render/latest/vivid/{z}/{x}/{y}/512@2x/png',
+							'https://b.tiles.mapquest.com/render/latest/vivid/{z}/{x}/{y}/512@2x/png',
+							'https://c.tiles.mapquest.com/render/latest/vivid/{z}/{x}/{y}/512@2x/png',
+							'https://d.tiles.mapquest.com/render/latest/vivid/{z}/{x}/{y}/512@2x/png',
+						],
+						'attribution' => '<a href="https://hello.mapquest.com/terms-of-use" target="_blank">MapQuest</a>',
+					]],
+					'layers'  => [[
+						'id'     => 'mapquest',
+						'type'   => 'raster',
+						'source' => 'mapquest',
+					]]
+				];
 		}
 
 		return null;
