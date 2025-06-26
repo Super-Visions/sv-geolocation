@@ -44,10 +44,10 @@ class AttributeGeolocation extends AttributeDBField
 	/**
 	 * @param $aCols
 	 * @param string $sPrefix
-	 * @return ormGeolocation
+	 * @return ormGeolocation|null
 	 * @throws MissingColumnException
 	 */
-	public function FromSQLToValue($aCols, $sPrefix = ''): ormGeolocation
+	public function FromSQLToValue($aCols, $sPrefix = ''): ?ormGeolocation
 	{
 		if (!array_key_exists($sPrefix . 'latitude', $aCols))
 		{
@@ -61,7 +61,9 @@ class AttributeGeolocation extends AttributeDBField
 			throw new MissingColumnException("Missing column '" . $sPrefix . "longitude' from {$sAvailable}");
 		}
 
-		return new ormGeolocation(floatval($aCols[$sPrefix . 'latitude']), floatval($aCols[$sPrefix . 'longitude']));
+		if (is_null($aCols[$sPrefix . 'latitude']) && is_null($aCols[$sPrefix . 'longitude'])) return null;
+
+		return new ormGeolocation($aCols[$sPrefix . 'latitude'], $aCols[$sPrefix . 'longitude']);
 	}
 
 	public function GetSQLValues($value): array
