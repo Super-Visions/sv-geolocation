@@ -125,7 +125,7 @@ Defaults to 150.
 
 ## XML Dashboard Reference
 
-Dashlet type is `GeoMap`.
+Dashlet type is `DashletGeoMap`.
 
 ### Definition
 
@@ -145,7 +145,7 @@ The geolocation attribute to use for placing the object on the map.
 ### Example
 
 ```xml
-<dashlet id="1" xsi:type="GeoMap">
+<dashlet id="1" xsi:type="DashletGeoMap">
     <rank>1</rank>
     <height>500</height>
     <search>true</search>

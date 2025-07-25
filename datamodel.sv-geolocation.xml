@@ -79,8 +79,8 @@
 	</dictionaries>
 	<meta>
 		<dashlets>
-			<dashlet id="GeoMap" _delta="define">
-				<label>GeoMap</label>
+			<dashlet id="DashletGeoMap" _delta="define">
+				<label>DashletGeoMap</label>
 				<icon>sv-geolocation/images/geomap.png</icon>
 				<description>Add interactive map as dashlet.</description>
 				<configuration>

@@ -5,7 +5,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'sv-geolocation/2.0.1',
+	'sv-geolocation/2.1.0',
 	array(
 		// Identification
 		//
@@ -24,7 +24,7 @@ SetupWebPage::AddModule(
 		//
 		'datamodel' => array(
 			'main.sv-geolocation.php',
-			'geomap.class.inc.php',
+			'dashletgeomap.class.inc.php',
 			'interactiveform.class.inc.php',
 		),
 		'webservice' => array(

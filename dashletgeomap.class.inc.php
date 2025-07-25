@@ -10,7 +10,12 @@ use Combodo\iTop\Application\UI\Base\Layout\UIContentBlockUIBlockFactory;
 use Combodo\iTop\Service\Router\Router;
 use Combodo\iTop\Service\SummaryCard\SummaryCardService;
 
-class GeoMap extends Dashlet
+/**
+ * @deprecated 2.1.0 Use {@see DashletGeoMap} instead.
+ */
+class GeoMap extends DashletGeoMap {}
+
+class DashletGeoMap extends Dashlet
 {
 	/**
 	 * @var array{string, array{string, string}}
@@ -18,8 +23,7 @@ class GeoMap extends Dashlet
 	static protected array $aAttributeList;
 
 	/**
-	 * @param ModelReflection $oModelReflection
-	 * @param string $sId
+	 * @inheritDoc
 	 */
 	public function __construct(ModelReflection $oModelReflection, $sId)
 	{
@@ -176,9 +180,8 @@ HTML
 
 	/**
 	 * @inheritDoc
-	 * @return GeoMap
 	 */
-	public function Update($aValues, $aUpdatedFields): GeoMap
+	public function Update($aValues, $aUpdatedFields): static
 	{
 		if (in_array('query', $aUpdatedFields))
 		{
