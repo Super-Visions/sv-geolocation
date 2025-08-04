@@ -6,13 +6,37 @@
 		<xs:complexContent>
 			<xs:extension base="AttributeDefinition">
 				<xs:sequence>
-					<xs:element name="sql" type="alteredString"/>
-					<xs:element name="default_value" type="alteredString"/>
-					<xs:element name="is_null_allowed" type="xs:boolean"/>
-					<xs:element name="width" type="xs:nonNegativeInteger" minOccurs="0" default="200"/>
-					<xs:element name="height"  type="xs:nonNegativeInteger" minOccurs="0" default="150"/>
+					<xs:element name="sql" type="alteredString" minOccurs="0"/>
+					<xs:element name="default_value" type="alteredString" minOccurs="0"/>
+					<xs:element name="is_null_allowed" type="alteredBoolean" minOccurs="0"/>
+					<xs:element name="width" type="alteredNonNegativeInteger" minOccurs="0" default="200"/>
+					<xs:element name="height" type="alteredNonNegativeInteger" minOccurs="0" default="150"/>
+					<xs:element name="dependencies" type="dependenciesType" minOccurs="0"/>
 				</xs:sequence>
 			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DashletGeoMap">
+		<xs:complexContent>
+			<xs:extension base="Dashlet">
+				<xs:sequence>
+					<xs:element name="rank" type="alteredFloat" minOccurs="0"/>
+					<xs:element name="height" type="alteredNonNegativeInteger" minOccurs="0" default="600"/>
+					<xs:element name="search" type="alteredBoolean" minOccurs="0" default="false"/>
+					<xs:element name="query" type="alteredString" minOccurs="0"/>
+					<xs:element name="attribute" type="alteredString" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="GeoMap">
+		<xs:annotation>
+			<xs:documentation>This definition is deprecated, please use `DashletGeoMap` instead.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="DashletGeoMap"/>
 		</xs:complexContent>
 	</xs:complexType>
 </xs:schema>
