@@ -78,6 +78,8 @@ function make_interactive_map(oAttOptions, oMapOptions) {
 function map_save_location(oField, oLatLng) {
     if (oLatLng) oField.val(oLatLng.toUrlValue());
     else oField.val('');
+
+    oField.trigger('change');
 }
 
 function render_geomap(oDashlet) {

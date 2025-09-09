@@ -90,6 +90,8 @@ function make_interactive_map(oAttOptions, oMapOptions) {
 function map_save_location(oField, oLngLat) {
     if (oLngLat) oField.val(oLngLat.lat + ',' + oLngLat.lng);
     else oField.val('');
+
+    oField.trigger('change');
 }
 
 function render_geomap(oDashlet) {
