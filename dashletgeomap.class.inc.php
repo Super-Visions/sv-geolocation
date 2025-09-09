@@ -13,7 +13,30 @@ use Combodo\iTop\Service\SummaryCard\SummaryCardService;
 /**
  * @deprecated 2.1.0 Use {@see DashletGeoMap} instead.
  */
-class GeoMap extends DashletGeoMap {}
+class GeoMap extends DashletGeoMap {
+
+	public function Render($oPage, $bEditMode = false, $aExtraParams = array()): UIContentBlock
+	{
+		if (!$bEditMode) return parent::Render($oPage, $bEditMode, $aExtraParams);
+
+		$aInfos = DashletUnknown::GetInfo();
+
+		$sIconUrl = utils::HtmlEntities(utils::GetAbsoluteUrlAppRoot().$aInfos['icon']);
+		$sExplainText = Dict::Format('UI:DashletUnknown:RenderText:Edit', $this->GetDashletType());
+
+		$oBlock = UIContentBlockUIBlockFactory::MakeStandard(null, ["dashlet-content"]);
+
+		$oBlock->AddHtml('<div class="ibo-panel--body"><img src="' . $sIconUrl . '" /> ' . $sExplainText . '</div>');
+		return $oBlock;
+	}
+
+	public static function GetInfo() : array
+	{
+		$aInfo = DashletUnknown::GetInfo();
+		$aInfo['label'] .= sprintf(' (%s)', Dict::S('UI:DashletGeoMap:Label', static::class));
+		return $aInfo;
+	}
+}
 
 class DashletGeoMap extends Dashlet
 {
@@ -68,11 +91,11 @@ STYLE
 		$sBackgroundUrl = utils::GetAbsoluteUrlModulesRoot() . 'sv-geolocation/images/world-map.jpg';
 
 		$oBlock = UIContentBlockUIBlockFactory::MakeStandard(null, ["dashlet-content"]);
-		$oBlock->AddSubBlock(new Html(<<<HTML
+		$oBlock->AddHtml(<<<HTML
 <div id="{$sId}_panel" class="map_panel" style="display: {$sDisplaySearch};"><input id="{$sId}_address" type="text" /><button id="{$sId}_submit">{$sSearch}</button></div>
 <div id="{$sId}" class="ibo-panel--body" style="height: {$this->aProperties['height']}px; background: #ffffff url('{$sBackgroundUrl}') 50%/contain no-repeat;"></div>
 HTML
-		));
+		);
 
 		if ($bEditMode) return $oBlock;
 
