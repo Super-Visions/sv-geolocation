@@ -15,6 +15,9 @@ use Combodo\iTop\Service\SummaryCard\SummaryCardService;
  */
 class GeoMap extends DashletGeoMap {
 
+	/**
+	 * @todo to replace with `IsVisible` method.
+	 */
 	public function Render($oPage, $bEditMode = false, $aExtraParams = array()): UIContentBlock
 	{
 		if (!$bEditMode) return parent::Render($oPage, $bEditMode, $aExtraParams);
