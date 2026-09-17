@@ -156,8 +156,8 @@ HTML
 			case 'MapQuest':
 				$aDashletOptions['style'] = AttributeGeolocation::GetStyle();
 
-				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.js');
-				$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl/dist/maplibre-gl.css');
+				$oPage->LinkScriptFromURI('https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.mjs');
+				$oPage->LinkStylesheetFromURI('https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css');
 				$oPage->LinkScriptFromURI('https://rbrundritt.github.io/maplibre-gl-svg/dist/maplibre-gl-svg.min.js');
 				$oPage->LinkScriptFromModule('sv-geolocation/js/maplibre-utils.js');
 				break;
